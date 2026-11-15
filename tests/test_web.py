@@ -19,6 +19,7 @@ from suite.conversion.samples import generate_samples
 from suite.settings import Settings
 from suite.web.application import create_app
 from test_pdf import pdf_bytes
+from test_images import image_bytes
 
 
 class ControlledConverter:
@@ -80,8 +81,9 @@ class WebTests(unittest.TestCase):
         home = self.client.get("/")
         self.assertEqual(home.status_code, 200)
         self.assertIn('href="/word-to-pdf"', home.text)
-        self.assertEqual(home.text.count("EM BREVE"), 2)
-        for operation, accept, minimum in [("word-to-pdf", ".docx", 1), ("merge-pdfs", ".pdf", 2), ("convert-and-merge", ".docx,.pdf", 2)]:
+        self.assertEqual(home.text.count("EM BREVE"), 1)
+        for operation, accept, minimum in [("word-to-pdf", ".docx", 1), ("merge-pdfs", ".pdf", 2), ("convert-and-merge", ".docx,.pdf", 2),
+                                            ("images-to-pdf", ".jpg,.jpeg,.png", 1)]:
             with self.subTest(operation=operation):
                 self.assertIn(f'href="/{operation}"', home.text)
                 page = self.client.get(f"/{operation}")
@@ -258,9 +260,51 @@ class WebTests(unittest.TestCase):
 
     def test_openapi_documents_multipart_uploads_for_all_tools(self):
         paths = self.client.get("/openapi.json").json()["paths"]
-        for operation in ("word-to-pdf", "merge-pdfs", "convert-and-merge"):
+        for operation in ("word-to-pdf", "merge-pdfs", "convert-and-merge", "images-to-pdf"):
             schema = paths[f"/api/jobs/{operation}"]["post"]["requestBody"]["content"]["multipart/form-data"]["schema"]
             self.assertEqual(schema["properties"]["files"]["items"]["format"], "binary")
+
+    def test_images_flow_works_without_office_preserves_order_and_cleans_up(self):
+        self.converter.executable = None
+        response = self.client.post("/api/jobs/images-to-pdf", files=[
+            ("files", ("same.png", image_bytes((20, 40), color="blue"))),
+            ("files", ("same.png", image_bytes((40, 20), color="red")))])
+        job = self.finish(response)
+        self.assertEqual(job["state"], "completed", job)
+        self.assertEqual(job["pages"], 2)
+        self.assertEqual(job["files"][0]["name"], "images.pdf")
+        url = job["files"][0]["url"]
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        pages = PdfReader(io.BytesIO(response.content)).pages
+        self.assertEqual([page.images[0].image.size for page in pages], [(20, 40), (40, 20)])
+        self.assertEqual(pages[0].images[0].image.getpixel((0, 0)), (0, 0, 255))
+        self.assertIsNone(job["archive_url"])
+        self.assertEqual(self.converter.calls, 0)
+        self.assertFalse((self.client.app.state.documents.root / job["id"] / "inputs").exists())
+        self.assertEqual(self.client.delete(f'/api/jobs/{job["id"]}').status_code, 204)
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_single_image_is_accepted_but_invalid_images_leave_no_tasks(self):
+        job = self.finish(self.client.post("/api/jobs/images-to-pdf", files=[("files", ("photo.JPEG", image_bytes(format="JPEG")))]))
+        self.assertEqual(job["state"], "completed")
+        self.client.delete(f'/api/jobs/{job["id"]}')
+        for name, data in [("empty.png", b""), ("broken.png", b"bad"), ("wrong.pdf", pdf_bytes()),
+                           ("renamed.png", image_bytes(format="JPEG"))]:
+            with self.subTest(name=name):
+                response = self.client.post("/api/jobs/images-to-pdf", files=[("files", (name, data))])
+                self.assertEqual(response.status_code, 400, response.text)
+                self.assertEqual(list(self.client.app.state.documents.root.iterdir()), [])
+
+    def test_image_pixel_limits_are_enforced_before_queueing(self):
+        service = self.client.app.state.documents
+        service.settings = replace(self.settings, max_image_pixels=799)
+        response = self.client.post("/api/jobs/images-to-pdf", files=[("files", ("one.png", image_bytes()))])
+        self.assertEqual(response.status_code, 400)
+        service.settings = replace(self.settings, max_total_image_pixels=1599)
+        response = self.client.post("/api/jobs/images-to-pdf", files=[("files", ("one.png", image_bytes())), ("files", ("two.png", image_bytes()))])
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(list(service.root.iterdir()), [])
 
 
 if __name__ == "__main__":

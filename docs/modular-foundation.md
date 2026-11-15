@@ -24,7 +24,7 @@ O [FastAPI aceita uploads multipart](https://fastapi.tiangolo.com/tutorial/reque
 
 ## O que funciona
 
-- Página inicial com a grade aprovada; Word para PDF, juntar PDFs e converter e juntar estão disponíveis. As ferramentas compartilham o template `document-tool.html` e o script `document-tool.js`, configurados em `suite/web/tools.py`.
+- Página inicial com a grade aprovada; Word para PDF, juntar PDFs, converter e juntar e imagens para PDF estão disponíveis. As ferramentas compartilham o template `document-tool.html` e o script `document-tool.js`, configurados em `suite/web/tools.py`.
 - Seleção pelo explorador ou por arrastar e soltar, remoção de itens e validação no navegador e no servidor.
 - Uma inicialização do LibreOffice para todos os documentos de uma tarefa. Cada tarefa usa um perfil descartável próprio.
 - Estados `queued`, `processing`, `completed` e `failed`, consultados pelo navegador sem bloquear a página.

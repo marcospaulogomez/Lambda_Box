@@ -22,4 +22,13 @@ DOCUMENT_TOOLS = {
         "accept": ".docx,.pdf", "formats": "DOCX e PDF", "min_files": 2, "reorder": True,
         "action": "Converter e juntar", "progress": "Convertendo e juntando seus documentos", "result": "Seu PDF está pronto",
     },
+    "images-to-pdf": {
+        "title": "Imagens para PDF", "icon": "image", "category": "IMAGENS", "color": "#9ac8ad",
+        "card_description": "Transforme suas imagens em páginas de um PDF.", "flow": "IMAGENS → PDF",
+        "description": "Escolha suas imagens, ajuste a ordem e baixe um único PDF.",
+        "accept": ".jpg,.jpeg,.png", "formats": "JPG, JPEG e PNG", "min_files": 1, "reorder": True,
+        "selection_title": "Escolha suas imagens",
+        "hint": "Uma imagem por página A4, sem cortes, com orientação automática e margem de 12 mm. Transparências ficam com fundo branco.",
+        "action": "Gerar PDF", "progress": "Preparando suas imagens", "result": "Seu PDF está pronto",
+    },
 }

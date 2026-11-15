@@ -12,9 +12,11 @@ Hoje existem três partes distintas:
 - **Prévia da suíte:** `outputs/suite-design-preview.html`, exportada para `outputs/design-preview.html` e aberta por `Preview_Design.bat`. Exibe as cinco ferramentas, mas ainda não realiza operações com arquivos.
 - **Suíte modular local:** `suite/web/`, iniciada por `Start_Suite.bat`, com a grade inicial e o fluxo funcional de Word para PDF.
 
-A suíte está disponível em `Start_Suite.bat`: grade inicial com Word para PDF, juntar PDFs e converter e juntar, fila local e downloads. Consulte [a base modular](modular-foundation.md) para entender a implementação. Imagens para PDF e QR Code continuam planejados.
+A suíte está disponível em `Start_Suite.bat`: grade inicial com Word para PDF, juntar PDFs, converter e juntar e imagens para PDF, fila local e downloads. Consulte [a base modular](modular-foundation.md) para entender a implementação. QR Code continua planejado.
 
 Juntar PDFs e converter e juntar podem ser usados diretamente pelos cartões, com botões para reordenar os arquivos antes do envio. Consulte [as operações com PDF](pdf-backend.md).
+
+Imagens para PDF também funciona pelo cartão, com JPG, JPEG e PNG em páginas A4, preservando a proporção e ajustando a orientação. Consulte [o guia de imagens](images-to-pdf.md).
 
 Este documento define o que será implementado; não declara que a suíte funcional já está pronta.
 

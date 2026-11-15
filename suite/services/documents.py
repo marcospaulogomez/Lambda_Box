@@ -16,12 +16,14 @@ from typing import BinaryIO
 
 from suite.conversion import ConversionError, LibreOfficeConverter, validate_docx
 from suite.pdf import PdfProcessingError, merge_pdfs, validate_pdf
+from suite.images import ImageProcessingError, images_to_pdf, validate_image
 from suite.settings import Settings
 
 
 logger = logging.getLogger(__name__)
 TERMINAL_STATES = {"completed", "failed"}
-OPERATIONS = {"word-to-pdf": {".docx"}, "merge-pdfs": {".pdf"}, "convert-and-merge": {".docx", ".pdf"}}
+OPERATIONS = {"word-to-pdf": {".docx"}, "merge-pdfs": {".pdf"}, "convert-and-merge": {".docx", ".pdf"},
+              "images-to-pdf": {".jpg", ".jpeg", ".png"}}
 
 
 class ServiceError(Exception):
@@ -89,15 +91,19 @@ class DocumentService:
         if any(path.suffix == ".docx" for path in sources) and self.converter.executable is None:
             raise ServiceError("LibreOffice não encontrado no servidor para converter os documentos Word.", 503)
         page_count = 0
+        total_pixels = 0
         for index, source in enumerate(sources, 1):
             try:
-                if source.suffix == ".docx":
+                if job.operation == "images-to-pdf":
+                    total_pixels += validate_image(source, self.settings.max_image_pixels,
+                                                   remaining_pixels=self.settings.max_total_image_pixels - total_pixels)
+                elif source.suffix == ".docx":
                     validate_docx(source)
                 else:
                     page_count += validate_pdf(source, self.settings.max_pdf_pages)
                     if page_count > self.settings.max_pdf_pages:
                         raise PdfProcessingError(f"O limite desta etapa é de {self.settings.max_pdf_pages} páginas no total.")
-            except (ConversionError, PdfProcessingError) as exc:
+            except (ConversionError, PdfProcessingError, ImageProcessingError) as exc:
                 raise ServiceError(f"Documento {index}: {exc}") from exc
         with self._lock:
             job.filenames = filenames
@@ -106,7 +112,7 @@ class DocumentService:
             return self.snapshot(job.id)
 
     def save_sources(self, job: Job, uploads: list[tuple[str | None, BinaryIO]]) -> list[str]:
-        minimum = 1 if job.operation == "word-to-pdf" else 2
+        minimum = 1 if job.operation in {"word-to-pdf", "images-to-pdf"} else 2
         if len(uploads) < minimum or len(uploads) > self.settings.max_files:
             raise ServiceError(f"Selecione de {minimum} a {self.settings.max_files} documentos.")
         filenames = []
@@ -144,6 +150,11 @@ class DocumentService:
                 result = self.converter.convert_batch(sources, job.directory / "outputs")
                 outputs = list(result.outputs)
                 output_names = [self.download_name(index, name) for index, name in enumerate(job.filenames, 1)]
+            elif job.operation == "images-to-pdf":
+                result = images_to_pdf(sources, job.directory / "outputs" / "images.pdf",
+                                       max_pixels=self.settings.max_image_pixels, max_total_pixels=self.settings.max_total_image_pixels,
+                                       max_pages=self.settings.max_pdf_pages)
+                outputs, output_names, pages = [result.output], ["images.pdf"], result.pages
             else:
                 ordered_pdfs = sources
                 docx_sources = [path for path in sources if path.suffix == ".docx"]
@@ -160,7 +171,7 @@ class DocumentService:
                 with zipfile.ZipFile(job.directory / "documents.zip", "x", zipfile.ZIP_DEFLATED) as archive:
                     for path, name in zip(outputs, output_names):
                         archive.write(path, name)
-        except (ConversionError, PdfProcessingError) as exc:
+        except (ConversionError, PdfProcessingError, ImageProcessingError) as exc:
             error = str(exc)
         except Exception:
             logger.exception("Conversion failed for job %s", job.id)

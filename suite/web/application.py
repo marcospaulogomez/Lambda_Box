@@ -150,12 +150,17 @@ def create_app(settings: Settings | None = None, converter: LibreOfficeConverter
     async def convert_and_merge_page(request: Request):
         return render_tool(request, "convert-and-merge")
 
+    @app.get("/images-to-pdf", response_class=HTMLResponse)
+    async def images_to_pdf_page(request: Request):
+        return render_tool(request, "images-to-pdf")
+
     @app.get("/api/status")
     async def status(request: Request):
         return {"ok": True, "conversion_available": request.app.state.documents.converter.executable is not None,
                 "limits": {"max_files": settings.max_files, "max_file_bytes": settings.max_file_bytes,
                            "max_total_bytes": settings.max_total_bytes, "retention_seconds": settings.retention_seconds,
-                           "max_pdf_pages": settings.max_pdf_pages}}
+                           "max_pdf_pages": settings.max_pdf_pages, "max_image_pixels": settings.max_image_pixels,
+                           "max_total_image_pixels": settings.max_total_image_pixels}}
 
     async def accept_job(request: Request, operation: str):
         service = request.app.state.documents
@@ -193,6 +198,11 @@ def create_app(settings: Settings | None = None, converter: LibreOfficeConverter
               summary="Converter DOCX e juntar com PDFs na ordem enviada", tags=["Tools"])
     async def create_combined_job(request: Request):
         return await accept_job(request, "convert-and-merge")
+
+    @app.post("/api/jobs/images-to-pdf", status_code=202, openapi_extra=upload_schema,
+              summary="Converter JPG e PNG em páginas de um PDF", tags=["Tools"])
+    async def create_images_job(request: Request):
+        return await accept_job(request, "images-to-pdf")
 
     @app.get("/api/jobs/{job_id}")
     def job_status(request: Request, job_id: str):

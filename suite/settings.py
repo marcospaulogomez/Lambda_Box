@@ -17,6 +17,8 @@ class Settings:
     retention_seconds: int = 30 * 60
     conversion_timeout: float = 180
     max_pdf_pages: int = 500
+    max_image_pixels: int = 40_000_000
+    max_total_image_pixels: int = 100_000_000
     libreoffice_path: str | Path | None = None
 
     @classmethod
