@@ -13,6 +13,8 @@ Hoje existem duas partes distintas:
 
 Este documento define o que será implementado; não declara que a suíte funcional já está pronta.
 
+O laboratório da primeira etapa está disponível em `Testar_Conversao.bat`. Consulte [a prova de conversão](prova-conversao.md) para gerar exemplos, verificar o LibreOffice e registrar os resultados. A aprovação do motor continua pendente de testes reais e comparação visual.
+
 ## Ferramentas e critérios de conclusão
 
 | Ferramenta | Entrada inicial proposta | Resultado esperado | Verificação principal |

@@ -1,0 +1,2 @@
+# Opcional: permite ler os PDFs gerados e comparar paginas e dimensoes.
+pypdf==7.1.0
