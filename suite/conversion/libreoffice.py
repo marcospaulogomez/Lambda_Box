@@ -1,6 +1,6 @@
 """Conversão local de DOCX com perfil descartável e prazo de execução."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import os
 from pathlib import Path
 import shutil
@@ -20,6 +20,7 @@ class ConversionResult:
     output: Path
     seconds: float
     size_bytes: int
+    timings: dict[str, float] = field(default_factory=dict)
 
 
 def find_libreoffice(explicit: str | Path | None = None) -> Path | None:
@@ -122,12 +123,14 @@ class LibreOfficeConverter:
             shutil.copyfile(source, copied_source)
             converted_dir = work / "pdf"
             converted_dir.mkdir()
+            engine_started = time.perf_counter()
             result = _execute([
                 str(self.executable), f"-env:UserInstallation={(work / 'perfil').as_uri()}",
                 "--headless", "--nologo", "--nodefault", "--norestore",
                 "--convert-to", "pdf:writer_pdf_Export", "--outdir", str(converted_dir),
                 str(copied_source),
             ], self.timeout)
+            engine_finished = time.perf_counter()
             if result.returncode:
                 detail = (result.stderr or result.stdout or "Sem detalhes adicionais").strip()[-1500:]
                 raise ConversionError(f"O LibreOffice não concluiu a conversão (código {result.returncode}): {detail}")
@@ -147,4 +150,12 @@ class LibreOfficeConverter:
                     target.close()
                     destination.unlink(missing_ok=True)
                     raise
-        return ConversionResult(destination, round(time.perf_counter() - started, 3), destination.stat().st_size)
+            cleanup_started = time.perf_counter()
+        finished = time.perf_counter()
+        timings = {
+            "preparacao": round(engine_started - started, 3),
+            "motor": round(engine_finished - engine_started, 3),
+            "publicacao": round(cleanup_started - engine_finished, 3),
+            "limpeza": round(finished - cleanup_started, 3),
+        }
+        return ConversionResult(destination, round(finished - started, 3), destination.stat().st_size, timings)

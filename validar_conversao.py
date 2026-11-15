@@ -40,7 +40,10 @@ def write_report(directory: Path, report: dict) -> Path:
         source_link = f'<a href="{escape(Path(item["entrada"]).as_uri(), quote=True)}">DOCX</a>'
         pdf_link = f'<a href="{escape(Path(item["pdf"]).as_uri(), quote=True)}">PDF gerado</a>' if item.get("pdf") else "—"
         reference_link = f' · <a href="{escape(Path(item["referencia"]).as_uri(), quote=True)}">PDF do Word</a>' if item.get("referencia") else ""
-        rows.append(f'<tr><td>{escape(item["nome"])}</td><td>{escape(item["status"])}</td><td>{item.get("segundos", "—")}</td><td>{item.get("paginas") if item.get("paginas") is not None else "—"}</td><td>{source_link} · {pdf_link}{reference_link}</td><td>{escape(item.get("erro") or item.get("comparacao") or item.get("analise", ""))}</td></tr>')
+        timing = item.get("tempos_etapas", {})
+        labels = {"preparacao": "Preparação", "motor": "Motor", "publicacao": "Cópia do PDF", "limpeza": "Limpeza"}
+        breakdown = '<br><small>' + ' · '.join(f'{labels[key]}: {float(timing[key]):.3f}s' for key in labels if key in timing) + '</small>' if timing else ''
+        rows.append(f'<tr><td>{escape(item["nome"])}</td><td>{escape(item["status"])}</td><td>{item.get("segundos", "—")}{breakdown}</td><td>{item.get("paginas") if item.get("paginas") is not None else "—"}</td><td>{source_link} · {pdf_link}{reference_link}</td><td>{escape(item.get("erro") or item.get("comparacao") or item.get("analise", ""))}</td></tr>')
     html = f'''<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Prova de conversão</title>
 <style>body{{font:16px/1.6 system-ui,sans-serif;max-width:1200px;margin:32px auto;padding:0 20px;color:#182435;background:#f4f6f8}}h1{{line-height:1.2}}a{{color:#1c57a3}}table{{border-collapse:collapse;width:100%;background:white}}th,td{{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid #cad1db;overflow-wrap:anywhere}}.scroll{{overflow-x:auto}}small{{color:#465569}}@media(max-width:600px){{body{{margin:18px auto}}}}</style></head>
@@ -65,6 +68,7 @@ def main(argv: list[str] | None = None) -> int:
     modes.add_argument("--gerar-exemplos", action="store_true", help="Cria documentos fictícios e encerra.")
     modes.add_argument("--relatorio", action="store_true", help="Abre o relatório mais recente no navegador, sem converter.")
     parser.add_argument("--entrada", type=Path, help="Pasta com DOCX próprios; não gera exemplos nessa pasta.")
+    parser.add_argument("--pasta-exemplos", type=Path, default=BASE_DIR / "laboratorio" / "entrada", help="Pasta para gerar e usar exemplos fictícios, preservando os já existentes.")
     parser.add_argument("--saida", type=Path, default=BASE_DIR / "laboratorio" / "resultados", help="Pasta-base de resultados; cada execução cria uma subpasta.")
     parser.add_argument("--referencias", type=Path, help="Pasta de PDFs exportados no Word com os mesmos nomes dos DOCX.")
     parser.add_argument("--libreoffice", type=Path, help="Caminho do soffice.com/soffice, se instalado em outro local.")
@@ -97,10 +101,10 @@ def main(argv: list[str] | None = None) -> int:
                 return 1
         return 0 if converter.executable else 2
 
-    input_dir = (args.entrada or BASE_DIR / "laboratorio" / "entrada").resolve()
+    input_dir = (args.entrada or args.pasta_exemplos).resolve()
     if args.gerar_exemplos:
         if args.entrada is not None:
-            parser.error("--gerar-exemplos usa a pasta padrão; não combine com --entrada")
+            parser.error("--gerar-exemplos usa --pasta-exemplos; não combine com --entrada")
         for path in generate_samples(input_dir):
             print(path)
         print("Documentos fictícios prontos. Abra-os no Word para conferir os originais.")
@@ -136,7 +140,7 @@ def main(argv: list[str] | None = None) -> int:
         item = {"nome": source.name, "entrada": str(source), "status": "falha", "revisao_visual": "pendente"}
         try:
             result = converter.convert(source, run_dir / f"{index:03d}")
-            item.update({"status": "convertido", "pdf": str(result.output), "segundos": result.seconds, "bytes": result.size_bytes})
+            item.update({"status": "convertido", "pdf": str(result.output), "segundos": result.seconds, "bytes": result.size_bytes, "tempos_etapas": result.timings})
             try:
                 item.update(inspect_pdf(result.output))
             except Exception as exc:

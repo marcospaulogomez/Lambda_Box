@@ -64,6 +64,14 @@ Motores de processamento e arquivos temporários
 
 FastAPI com templates é a proposta para a camada HTTP. A migração deve acontecer em uma etapa verificável, preservando o uso local durante a transição. O Word atual serve como referência de comparação; o candidato para o servidor público é o LibreOffice, que ainda precisa passar pela prova de conversão.
 
+### Como funcionará na hospedagem
+
+O visitante enviará o DOCX pelo navegador. A aplicação Python no servidor receberá o arquivo, executará o LibreOffice sem interface gráfica e disponibilizará o PDF para download. O visitante não precisará instalar Python, Word ou LibreOffice. O [modo headless e a conversão pela linha de comando](https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html) são recursos documentados do LibreOffice.
+
+Na implantação, o motor precisa estar instalado no servidor que processa os arquivos. Uma proposta é empacotar Python, a aplicação, LibreOffice e as fontes necessárias em uma imagem Docker, que reúne os arquivos e dependências de execução ([conceito de imagem Docker](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/)). Uma hospedagem Linux usará a distribuição Linux do motor; a extração Windows do laboratório serve ao desenvolvimento local.
+
+Esse empacotamento ainda será criado. Antes de publicar, mediremos tempo e memória no servidor escolhido e definiremos a quantidade de tarefas simultâneas, a fila e a limpeza dos arquivos. As fontes disponíveis no servidor também precisam entrar na validação visual dos documentos. Quem clonar o repositório para executar o processamento na própria máquina precisará preparar essas dependências, conforme o guia do projeto.
+
 ## Ordem de desenvolvimento
 
 1. **Prova de conversão:** comparar DOCX representativos no Word e no motor candidato, registrar diferenças e medir tempo e consumo de recursos.

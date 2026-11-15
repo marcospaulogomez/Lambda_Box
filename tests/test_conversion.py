@@ -103,6 +103,36 @@ class ConversionTests(unittest.TestCase):
         with zipfile.ZipFile(self.documents[2]) as package:
             self.assertTrue(package.read("word/media/padrao.png").startswith(b"\x89PNG\r\n\x1a\n"))
 
+    def test_samples_define_line_and_paragraph_spacing(self):
+        ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+        word = '{' + ns['w'] + '}'
+        with zipfile.ZipFile(self.documents[0]) as package:
+            styles = ET.fromstring(package.read("word/styles.xml"))
+            default = styles.find("w:docDefaults/w:pPrDefault/w:pPr/w:spacing", ns)
+            self.assertEqual(default.attrib[word + "line"], "276")
+            self.assertEqual(default.attrib[word + "lineRule"], "auto")
+            self.assertEqual(default.attrib[word + "after"], "160")
+            document = ET.fromstring(package.read("word/document.xml"))
+            self.assertGreaterEqual(len(document.findall(".//w:br", ns)), 2)
+
+    def test_sample_image_has_explicit_zero_distances_and_left_alignment(self):
+        ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main", "wp": "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"}
+        with zipfile.ZipFile(self.documents[2]) as package:
+            document = ET.fromstring(package.read("word/document.xml"))
+            image = document.find(".//wp:inline", ns)
+            self.assertEqual([image.attrib[key] for key in ("distL", "distR", "distT", "distB")], ["0"] * 4)
+            paragraph = next(p for p in document.findall(".//w:p", ns) if p.find(".//wp:inline", ns) is not None)
+            self.assertEqual(paragraph.find("w:pPr/w:jc", ns).attrib['{' + ns['w'] + '}val'], "left")
+
+    def test_cli_can_generate_revised_examples_in_another_folder(self):
+        revised = self.root / "entrada-v2"
+        original = self.documents[0].read_bytes()
+        with patch("builtins.print"):
+            result = main(["--gerar-exemplos", "--pasta-exemplos", str(revised)])
+        self.assertEqual(result, 0)
+        self.assertEqual(len(list(revised.glob("*.docx"))), 5)
+        self.assertEqual(self.documents[0].read_bytes(), original)
+
     def test_empty_input_directory_returns_actionable_failure(self):
         with patch("builtins.print"):
             self.assertEqual(main(["--entrada", str(self.root)]), 2)
