@@ -81,6 +81,47 @@ class ConversionTests(unittest.TestCase):
         self.assertEqual(first.output.read_bytes(), second.output.read_bytes())
         self.assertEqual(self.documents[0].read_bytes(), original)
 
+    def test_batch_launches_once_with_safe_names_and_separate_profiles(self):
+        calls = []
+        originals = [path.read_bytes() for path in self.documents[:2]]
+        def fake_engine(command, timeout):
+            calls.append(command)
+            output = Path(command[command.index("--outdir") + 1])
+            for source in (Path(value) for value in command if value.endswith(".docx")):
+                (output / source.with_suffix(".pdf").name).write_bytes(b"%PDF-1.7\ncontract")
+            return subprocess.CompletedProcess(command, 0, "", "")
+        with patch("suite.conversion.libreoffice._execute", side_effect=fake_engine):
+            first = self.converter.convert_batch(self.documents[:2], self.root / "batch-1")
+            second = self.converter.convert_batch(self.documents[:2], self.root / "batch-2")
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(len(first.outputs), 2)
+        self.assertEqual([path.name for path in first.outputs], ["document-001.pdf", "document-002.pdf"])
+        profiles = [next(value for value in call if value.startswith("-env:UserInstallation=")) for call in calls]
+        self.assertNotEqual(profiles[0], profiles[1])
+        self.assertEqual([path.read_bytes() for path in self.documents[:2]], originals)
+        self.assertEqual([path.read_bytes() for path in first.outputs], [path.read_bytes() for path in second.outputs])
+
+    def test_batch_missing_pdf_does_not_publish_partial_results(self):
+        def incomplete_engine(command, timeout):
+            output = Path(command[command.index("--outdir") + 1])
+            (output / "document-001.pdf").write_bytes(b"%PDF-1.7\ncontract")
+            return subprocess.CompletedProcess(command, 0, "", "")
+        with patch("suite.conversion.libreoffice._execute", side_effect=incomplete_engine):
+            with self.assertRaisesRegex(ConversionError, "documento 2"):
+                self.converter.convert_batch(self.documents[:2], self.root / "batch")
+        self.assertFalse((self.root / "batch").exists())
+
+    def test_batch_refuses_existing_output_before_engine_launch(self):
+        output = self.root / "batch"
+        output.mkdir()
+        existing = output / "document-002.pdf"
+        existing.write_bytes(b"user output")
+        with patch("suite.conversion.libreoffice._execute") as execute:
+            with self.assertRaisesRegex(ConversionError, "Já existe"):
+                self.converter.convert_batch(self.documents[:2], output)
+            execute.assert_not_called()
+        self.assertEqual(existing.read_bytes(), b"user output")
+
     def test_explicit_missing_executable_does_not_fall_back(self):
         self.assertIsNone(find_libreoffice(self.root / "inexistente.exe"))
 

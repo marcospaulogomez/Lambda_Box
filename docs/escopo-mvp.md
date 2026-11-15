@@ -6,10 +6,13 @@ A prioridade é construir o software. Nome, logo, favicon, ícones próprios e a
 
 MVP significa primeira versão utilizável: um conjunto limitado de ferramentas com resultados verificáveis e um fluxo completo de entrada, processamento e download.
 
-Hoje existem duas partes distintas:
+Hoje existem três partes distintas:
 
 - **Aplicativo funcional:** `app.py` e `public/`, iniciados por `Iniciar_Conversor.bat`. Automatiza o Word instalado no Windows e oferece o fluxo de converter e juntar. A junção normalmente usa PDF-Lib no navegador.
 - **Prévia da suíte:** `outputs/previa-suite-autoral.html`, exportada para `outputs/testar-visual.html` e aberta por `Testar_Visual.bat`. Exibe as cinco ferramentas, mas ainda não realiza operações com arquivos.
+- **Suíte modular local:** `suite/web/`, iniciada por `Iniciar_Suite.bat`, com a grade inicial e o fluxo funcional de Word para PDF.
+
+A primeira integração funcional da suíte agora está disponível em `Iniciar_Suite.bat`: grade inicial e Word para PDF com LibreOffice, fila local, PDFs individuais e ZIP. Consulte [a base modular](base-modular.md) para entender a implementação e testar. As outras quatro ferramentas continuam planejadas.
 
 Este documento define o que será implementado; não declara que a suíte funcional já está pronta.
 

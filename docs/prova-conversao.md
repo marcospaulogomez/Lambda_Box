@@ -110,6 +110,7 @@ Também é possível definir `LIBREOFFICE_PATH` para esse caminho. Para document
 ## Testes automatizados
 
 ```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 

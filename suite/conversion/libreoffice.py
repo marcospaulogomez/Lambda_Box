@@ -23,6 +23,29 @@ class ConversionResult:
     timings: dict[str, float] = field(default_factory=dict)
 
 
+@dataclass(frozen=True)
+class BatchConversionResult:
+    outputs: tuple[Path, ...]
+    seconds: float
+
+
+def validate_docx(source: Path) -> None:
+    """Check the package without changing the document or extracting its entries."""
+    if not source.is_file() or source.suffix.lower() != ".docx":
+        raise ConversionError("Selecione um arquivo DOCX existente.")
+    try:
+        with zipfile.ZipFile(source) as package:
+            required = {"[Content_Types].xml", "word/document.xml"}
+            if not required.issubset(package.namelist()):
+                raise ConversionError("O arquivo não contém um documento DOCX reconhecível.")
+            if any(entry.flag_bits & 1 for entry in package.infolist()):
+                raise ConversionError("Documentos protegidos por senha não são aceitos nesta etapa.")
+            if len(package.infolist()) > 2000 or sum(entry.file_size for entry in package.infolist()) > 100 * 1024 * 1024:
+                raise ConversionError("O conteúdo descompactado do DOCX excede o limite desta etapa.")
+    except (zipfile.BadZipFile, OSError) as exc:
+        raise ConversionError("O arquivo DOCX está inválido ou não pode ser lido.") from exc
+
+
 def find_libreoffice(explicit: str | Path | None = None) -> Path | None:
     """Procura uma instalação existente; um caminho explícito não usa fallback."""
     configured = explicit if explicit is not None else os.environ.get("LIBREOFFICE_PATH")
@@ -97,6 +120,58 @@ class LibreOfficeConverter:
             detail = (result.stderr or result.stdout).strip()[-1500:] or f"código de saída {result.returncode}"
             raise ConversionError(f"Falha ao consultar a versão: {detail}")
         return result.stdout.strip() or result.stderr.strip() or "Versão não informada"
+
+    def convert_batch(self, sources: list[Path], output_dir: Path) -> BatchConversionResult:
+        """Convert one task with one engine invocation; publish only a complete batch."""
+        if not sources:
+            raise ConversionError("Selecione pelo menos um documento.")
+        sources = [Path(source).resolve() for source in sources]
+        for source in sources:
+            validate_docx(source)
+        if self.executable is None:
+            raise ConversionError("LibreOffice não encontrado. Instale-o ou informe LIBREOFFICE_PATH.")
+        output_dir = Path(output_dir).resolve()
+        destinations = tuple(output_dir / f"document-{index:03d}.pdf" for index in range(1, len(sources) + 1))
+        if any(path.exists() for path in destinations):
+            raise ConversionError("Já existe um resultado para este lote.")
+        started = time.perf_counter()
+        published = []
+        with tempfile.TemporaryDirectory(prefix="suite-batch-") as temporary:
+            work = Path(temporary)
+            converted_dir = work / "pdf"
+            converted_dir.mkdir()
+            inputs = []
+            for index, source in enumerate(sources, 1):
+                copied = work / f"document-{index:03d}.docx"
+                shutil.copyfile(source, copied)
+                inputs.append(copied)
+            result = _execute([
+                str(self.executable), f"-env:UserInstallation={(work / 'profile').as_uri()}",
+                "--headless", "--nologo", "--nodefault", "--norestore",
+                "--convert-to", "pdf:writer_pdf_Export", "--outdir", str(converted_dir),
+                *(str(path) for path in inputs),
+            ], self.timeout)
+            if result.returncode:
+                raise ConversionError("O LibreOffice não concluiu o lote. Confira os documentos e tente novamente.")
+            generated = [converted_dir / path.name for path in destinations]
+            for index, path in enumerate(generated, 1):
+                if not path.is_file():
+                    raise ConversionError(f"O documento {index} não gerou PDF. Nenhum resultado do lote foi disponibilizado.")
+                with path.open("rb") as stream:
+                    if stream.read(5) != b"%PDF-":
+                        raise ConversionError(f"O documento {index} não gerou um PDF válido.")
+            output_dir.mkdir(parents=True, exist_ok=True)
+            try:
+                for source, destination in zip(generated, destinations):
+                    with destination.open("xb") as target:
+                        published.append(destination)
+                        with source.open("rb") as stream:
+                            shutil.copyfileobj(stream, target)
+            except BaseException:
+                for path in published:
+                    path.unlink(missing_ok=True)
+                raise
+        return BatchConversionResult(destinations, round(time.perf_counter() - started, 3))
 
     def convert(self, source: Path, output_dir: Path) -> ConversionResult:
         source = Path(source).resolve()
