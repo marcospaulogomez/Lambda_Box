@@ -16,6 +16,7 @@ class Settings:
     max_pending_jobs: int = 4
     retention_seconds: int = 30 * 60
     conversion_timeout: float = 180
+    max_pdf_pages: int = 500
     libreoffice_path: str | Path | None = None
 
     @classmethod

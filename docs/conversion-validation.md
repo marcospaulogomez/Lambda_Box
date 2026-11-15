@@ -63,7 +63,7 @@ Exemplos já existentes não são sobrescritos. Se quiser começar novamente, us
 Para gerar e converter os exemplos revisados em outra pasta, preservando os anteriores:
 
 ```powershell
-.\Test_Conversion.bat --samples-dir .\laboratory\input-v2
+.\Test_Conversion.bat --samples-dir .\laboratory\samples-v2
 ```
 
 Os exemplos revisados definem explicitamente entrelinha de 1,15, espaço de 8 pontos após os parágrafos e alinhamento da imagem. O primeiro documento inclui três linhas dentro do mesmo parágrafo, para distinguir entrelinha de distância entre parágrafos. Essa formatação pertence aos documentos fictícios; o adaptador não aplica esses valores aos arquivos enviados pelo usuário.
@@ -73,7 +73,7 @@ O relatório agora separa preparação, execução do motor, cópia do PDF e lim
 ## Comparar com o Word
 
 1. Abra cada DOCX de `laboratory/samples/` no Word e confira que ele está íntegro.
-2. Exporte pelo Word para uma pasta `laboratory/word-references/`, mantendo o mesmo nome-base. Por exemplo, `01-texto-e-fontes.docx` deve corresponder a `01-texto-e-fontes.pdf`.
+2. Exporte pelo Word para uma pasta `laboratory/word-references/`, mantendo o mesmo nome-base. Por exemplo, `01-text-and-fonts.docx` deve corresponder a `01-text-and-fonts.pdf`.
 3. Execute:
 
 ```powershell
@@ -87,7 +87,7 @@ O quinto exemplo deve ter duas páginas. Na imagem, as áreas coloridas precisam
 
 Quantidades e dimensões iguais de páginas não provam que a formatação está igual. Referências ausentes ficam explicitamente indicadas no relatório.
 
-Ao comparar a revisão, use os DOCX de `laboratory/input-v2/` e referências exportadas desses mesmos documentos. Informe `--samples-dir .\laboratory\input-v2` junto com `--references` para não converter os exemplos antigos por engano.
+Para comparar a revisão histórica preservada em `laboratory/input-v2/`, use `--input .\laboratory\input-v2` junto com `--references` e referências exportadas desses mesmos DOCX. O parâmetro `--input` usa os arquivos existentes sem gerar novos exemplos na pasta.
 
 ## Testar documentos próprios
 

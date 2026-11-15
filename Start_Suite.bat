@@ -8,7 +8,7 @@ if not exist "%~dp0.venv\Scripts\python.exe" (
     pause
     exit /b 1
 )
-"%~dp0.venv\Scripts\python.exe" -c "import fastapi, uvicorn, multipart, jinja2" >nul 2>&1
+"%~dp0.venv\Scripts\python.exe" -c "import fastapi, uvicorn, multipart, jinja2, pypdf" >nul 2>&1
 if errorlevel 1 (
     echo Instale as dependencias com:
     echo .\.venv\Scripts\python.exe -m pip install -r requirements.txt

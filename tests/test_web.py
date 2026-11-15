@@ -18,6 +18,7 @@ from suite.conversion import BatchConversionResult, ConversionError
 from suite.conversion.samples import generate_samples
 from suite.settings import Settings
 from suite.web.application import create_app
+from test_pdf import pdf_bytes
 
 
 class ControlledConverter:
@@ -188,6 +189,71 @@ class WebTests(unittest.TestCase):
         response = self.client.post("/api/jobs/word-to-pdf", files=[("files", ("test.docx", self.source))],
                                     headers={"Origin": "http://testserver"})
         self.assertEqual(self.finish(response)["state"], "completed")
+
+    def test_pdf_merge_works_without_libreoffice_and_uses_received_order(self):
+        self.converter.executable = None
+        sources = [("files", ("same.pdf", pdf_bytes(((842, 595),), rotation=90))),
+                   ("files", ("same.pdf", pdf_bytes(((100, 200), (200, 300)))))]
+        job = self.finish(self.client.post("/api/jobs/merge-pdfs", files=sources))
+        self.assertEqual(job["state"], "completed")
+        self.assertEqual(job["pages"], 3)
+        self.assertEqual(job["operation"], "merge-pdfs")
+        self.assertEqual(job["files"][0]["name"], "merged.pdf")
+        reader = PdfReader(io.BytesIO(self.client.get(job["files"][0]["url"]).content))
+        self.assertEqual([float(page.mediabox.width) for page in reader.pages], [842, 100, 200])
+        self.assertEqual(reader.pages[0].rotation, 90)
+        self.assertEqual(self.converter.calls, 0)
+        self.assertIsNone(job["archive_url"])
+
+    def test_combined_flow_keeps_interleaved_pdfs_and_converted_documents(self):
+        sources = [("files", ("existing.pdf", pdf_bytes(((100, 200),)))),
+                   ("files", ("report.docx", self.source)),
+                   ("files", ("existing.pdf", pdf_bytes(((200, 300),)))),
+                   ("files", ("report.docx", self.source))]
+        job = self.finish(self.client.post("/api/jobs/convert-and-merge", files=sources))
+        self.assertEqual(job["state"], "completed", job)
+        reader = PdfReader(io.BytesIO(self.client.get(job["files"][0]["url"]).content))
+        self.assertEqual([float(page.mediabox.width) for page in reader.pages], [100, 595, 200, 595, 595])
+        self.assertEqual(self.converter.calls, 1)
+        self.assertEqual(job["pages"], 5)
+        directory = self.client.app.state.documents.root / job["id"]
+        self.assertFalse((directory / "converted").exists())
+        self.assertFalse((directory / "inputs").exists())
+
+    def test_pdf_endpoints_reject_invalid_uploads_before_queueing(self):
+        for files in [[("files", ("single.pdf", pdf_bytes()))],
+                      [("files", ("one.pdf", pdf_bytes())), ("files", ("two.docx", self.source))],
+                      [("files", ("one.pdf", pdf_bytes())), ("files", ("two.pdf", b"not pdf"))],
+                      [("files", ("one.pdf", pdf_bytes())), ("files", ("two.pdf", pdf_bytes(password="secret")))]]:
+            with self.subTest(files=[item[1][0] for item in files]):
+                response = self.client.post("/api/jobs/merge-pdfs", files=files)
+                self.assertEqual(response.status_code, 400, response.text)
+        self.assertEqual(self.converter.calls, 0)
+        self.assertEqual(list(self.client.app.state.documents.root.iterdir()), [])
+
+    def test_combined_page_limit_applies_after_word_conversion(self):
+        service = self.client.app.state.documents
+        service.settings = replace(self.settings, max_pdf_pages=1)
+        sources = [("files", ("one.pdf", pdf_bytes())), ("files", ("two.docx", self.source))]
+        job = self.finish(self.client.post("/api/jobs/convert-and-merge", files=sources))
+        self.assertEqual(job["state"], "failed")
+        self.assertEqual(job["files"], [])
+        self.assertIn("limite", job["error"])
+        self.assertFalse((service.root / job["id"] / "converted").exists())
+
+    def test_combined_pdf_only_job_does_not_require_word_engine(self):
+        self.converter.executable = None
+        sources = [("files", ("one.pdf", pdf_bytes())), ("files", ("two.pdf", pdf_bytes()))]
+        job = self.finish(self.client.post("/api/jobs/convert-and-merge", files=sources))
+        self.assertEqual(job["state"], "completed")
+        sources[1] = ("files", ("two.docx", self.source))
+        self.assertEqual(self.client.post("/api/jobs/convert-and-merge", files=sources).status_code, 503)
+
+    def test_openapi_documents_multipart_uploads_for_all_tools(self):
+        paths = self.client.get("/openapi.json").json()["paths"]
+        for operation in ("word-to-pdf", "merge-pdfs", "convert-and-merge"):
+            schema = paths[f"/api/jobs/{operation}"]["post"]["requestBody"]["content"]["multipart/form-data"]["schema"]
+            self.assertEqual(schema["properties"]["files"]["items"]["format"], "binary")
 
 
 if __name__ == "__main__":

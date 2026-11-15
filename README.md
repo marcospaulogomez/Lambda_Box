@@ -5,6 +5,7 @@ Projeto em desenvolvimento para aprendizado em Python, portfólio e futura dispo
 ## Estado atual
 
 - **Suíte modular local:** página inicial azul e Word para PDF com upload de DOCX, processamento em lote pelo LibreOffice, acompanhamento da tarefa e downloads individuais ou em ZIP.
+- **API de PDFs:** juntar PDFs e converter e juntar DOCX/PDFs já estão disponíveis no backend, com teste pela documentação interativa em `/docs`. As telas serão conectadas depois.
 - **Conversor local funcional:** converte documentos com o Microsoft Word instalado no Windows e permite juntar os resultados.
 - **Prévia visual:** grade azul com as cinco ferramentas planejadas; ainda não está integrada ao processamento.
 - **Laboratório de conversão:** testa DOCX com LibreOffice, gera exemplos fictícios e registra os resultados para comparação com o Word.
@@ -104,3 +105,5 @@ outputs/                  Fontes e exportação da prévia visual
 ```
 
 O adaptador é separado da interface para que o motor possa evoluir sem reescrever as telas. A base modular já atende Word para PDF; as demais ferramentas serão integradas por etapas.
+
+Consulte o [backend de operações com PDF](docs/pdf-backend.md) para testar juntar PDFs e converter e juntar. Os nomes dos arquivos e diretórios do projeto agora são em inglês: use `Start_Suite.bat`, `Test_Conversion.bat` e `validate_conversion.py`. Os resultados históricos locais foram preservados em `laboratory/`, com os relatórios chamados `report.html` e `report.json`.

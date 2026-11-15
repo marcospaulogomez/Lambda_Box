@@ -14,6 +14,8 @@ Hoje existem três partes distintas:
 
 A primeira integração funcional da suíte agora está disponível em `Start_Suite.bat`: grade inicial e Word para PDF com LibreOffice, fila local, PDFs individuais e ZIP. Consulte [a base modular](modular-foundation.md) para entender a implementação e testar. As outras quatro ferramentas continuam planejadas.
 
+O backend de juntar PDFs e converter e juntar já foi implementado e pode ser testado pela API. As telas dessas duas ferramentas ainda serão conectadas. Consulte [as operações com PDF](pdf-backend.md).
+
 Este documento define o que será implementado; não declara que a suíte funcional já está pronta.
 
 O laboratório da primeira etapa está disponível em `Test_Conversion.bat`. Consulte [a prova de conversão](conversion-validation.md) para gerar exemplos, verificar o LibreOffice e registrar os resultados. A aprovação do motor continua pendente de testes reais e comparação visual.

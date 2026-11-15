@@ -141,17 +141,17 @@ def create_app(settings: Settings | None = None, converter: LibreOfficeConverter
     async def status(request: Request):
         return {"ok": True, "conversion_available": request.app.state.documents.converter.executable is not None,
                 "limits": {"max_files": settings.max_files, "max_file_bytes": settings.max_file_bytes,
-                           "max_total_bytes": settings.max_total_bytes, "retention_seconds": settings.retention_seconds}}
+                           "max_total_bytes": settings.max_total_bytes, "retention_seconds": settings.retention_seconds,
+                           "max_pdf_pages": settings.max_pdf_pages}}
 
-    @app.post("/api/jobs/word-to-pdf", status_code=202)
-    async def create_job(request: Request):
+    async def accept_job(request: Request, operation: str):
         service = request.app.state.documents
         # Count and part limits apply before any conversion task is created.
         async with request.form(max_files=settings.max_files, max_fields=0) as form:
             uploads = form.getlist("files")
             if not uploads or len(uploads) != len(form.multi_items()) or any(not isinstance(item, UploadFile) for item in uploads):
                 raise ServiceError("Selecione documentos no campo de arquivos.")
-            job = service.create()
+            job = service.create(operation)
             try:
                 filenames = await run_in_threadpool(service.save_sources, job, [(item.filename, item.file) for item in uploads])
                 snapshot = await run_in_threadpool(service.submit, job, filenames)
@@ -161,6 +161,25 @@ def create_app(settings: Settings | None = None, converter: LibreOfficeConverter
                     service.discard_upload(job)
                 raise
         return JSONResponse(snapshot, status_code=202, headers={"Cache-Control": "no-store"})
+
+    upload_schema = {"requestBody": {"required": True, "content": {"multipart/form-data": {"schema": {
+        "type": "object", "required": ["files"], "properties": {"files": {"type": "array", "items": {"type": "string", "format": "binary"}}}
+    }}}}}
+
+    @app.post("/api/jobs/word-to-pdf", status_code=202, openapi_extra=upload_schema,
+              summary="Converter DOCX em PDFs individuais", tags=["Tools"])
+    async def create_word_job(request: Request):
+        return await accept_job(request, "word-to-pdf")
+
+    @app.post("/api/jobs/merge-pdfs", status_code=202, openapi_extra=upload_schema,
+              summary="Juntar PDFs na ordem enviada", tags=["Tools"])
+    async def create_merge_job(request: Request):
+        return await accept_job(request, "merge-pdfs")
+
+    @app.post("/api/jobs/convert-and-merge", status_code=202, openapi_extra=upload_schema,
+              summary="Converter DOCX e juntar com PDFs na ordem enviada", tags=["Tools"])
+    async def create_combined_job(request: Request):
+        return await accept_job(request, "convert-and-merge")
 
     @app.get("/api/jobs/{job_id}")
     def job_status(request: Request, job_id: str):
