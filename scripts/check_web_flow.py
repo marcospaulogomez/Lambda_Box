@@ -25,7 +25,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Verificar upload, lote, PDFs, ZIP e exclusão com o servidor local em execução.")
     parser.add_argument("--url", default="http://127.0.0.1:8090")
     args = parser.parse_args()
-    run_dir = ROOT / "laboratorio" / "fluxo-web" / uuid.uuid4().hex[:8]
+    run_dir = ROOT / "laboratory" / "web-flow" / uuid.uuid4().hex[:8]
     sources = generate_samples(run_dir / "inputs")
     original_hashes = [hashlib.sha256(path.read_bytes()).hexdigest() for path in sources]
     started = time.perf_counter()

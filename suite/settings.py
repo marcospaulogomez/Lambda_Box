@@ -20,6 +20,6 @@ class Settings:
 
     @classmethod
     def local(cls) -> "Settings":
-        extracted = PROJECT_ROOT / "laboratorio" / "motor" / "program" / "soffice.com"
+        extracted = PROJECT_ROOT / "laboratory" / "engine" / "program" / "soffice.com"
         configured = os.environ.get("LIBREOFFICE_PATH")
         return cls(libreoffice_path=configured or (extracted if extracted.is_file() else None))

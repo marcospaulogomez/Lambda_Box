@@ -53,11 +53,11 @@ def generate_samples(directory: Path) -> list[Path]:
     table += '</w:tbl>'
     picture = _picture_paragraph()
     cases = [
-        ("01-texto-e-fontes.docx", paragraph("Texto e fontes", bold=True, size=36) + paragraph("Informação, conversão, ação, ç, á, ê e R$ 1.234,56.") + paragraph("Arial: confira acentos e alinhamento.") + paragraph("Times New Roman: confira a troca de fonte.", font="Times New Roman") + paragraph("Linhas no mesmo parágrafo (1,15):\nSegunda linha para comparação.\nTerceira linha para comparação."), False, False),
-        ("02-tabela-e-cabecalho.docx", paragraph("Tabela com cabeçalho e rodapé", bold=True, size=32) + table + paragraph("Confira as bordas, as colunas e a numeração de página."), False, False),
-        ("03-imagem-e-proporcao.docx", paragraph("Imagem com proporção 2:1", bold=True, size=32) + picture + paragraph("O retângulo deve manter as três áreas coloridas e a proporção horizontal."), False, True),
-        ("04-paisagem.docx", paragraph("Página em paisagem", bold=True, size=32) + paragraph("Confira orientação horizontal e margens.") + table, True, False),
-        ("05-quebra-de-pagina.docx", paragraph("Primeira página", bold=True, size=32) + paragraph("Este documento deve ter exatamente duas páginas.") + '<w:p><w:r><w:br w:type="page"/></w:r></w:p>' + paragraph("Segunda página", bold=True, size=32) + paragraph("Confira a quebra manual e a numeração no rodapé."), False, False),
+        ("01-text-and-fonts.docx", paragraph("Texto e fontes", bold=True, size=36) + paragraph("Informação, conversão, ação, ç, á, ê e R$ 1.234,56.") + paragraph("Arial: confira acentos e alinhamento.") + paragraph("Times New Roman: confira a troca de fonte.", font="Times New Roman") + paragraph("Linhas no mesmo parágrafo (1,15):\nSegunda linha para comparação.\nTerceira linha para comparação."), False, False),
+        ("02-table-and-header.docx", paragraph("Tabela com cabeçalho e rodapé", bold=True, size=32) + table + paragraph("Confira as bordas, as colunas e a numeração de página."), False, False),
+        ("03-image-and-proportions.docx", paragraph("Imagem com proporção 2:1", bold=True, size=32) + picture + paragraph("O retângulo deve manter as três áreas coloridas e a proporção horizontal."), False, True),
+        ("04-landscape.docx", paragraph("Página em paisagem", bold=True, size=32) + paragraph("Confira orientação horizontal e margens.") + table, True, False),
+        ("05-page-break.docx", paragraph("Primeira página", bold=True, size=32) + paragraph("Este documento deve ter exatamente duas páginas.") + '<w:p><w:r><w:br w:type="page"/></w:r></w:p>' + paragraph("Segunda página", bold=True, size=32) + paragraph("Confira a quebra manual e a numeração no rodapé."), False, False),
     ]
     created = []
     for name, body, landscape, image in cases:

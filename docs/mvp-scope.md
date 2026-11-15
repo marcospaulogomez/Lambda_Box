@@ -8,15 +8,15 @@ MVP significa primeira versão utilizável: um conjunto limitado de ferramentas 
 
 Hoje existem três partes distintas:
 
-- **Aplicativo funcional:** `app.py` e `public/`, iniciados por `Iniciar_Conversor.bat`. Automatiza o Word instalado no Windows e oferece o fluxo de converter e juntar. A junção normalmente usa PDF-Lib no navegador.
-- **Prévia da suíte:** `outputs/previa-suite-autoral.html`, exportada para `outputs/testar-visual.html` e aberta por `Testar_Visual.bat`. Exibe as cinco ferramentas, mas ainda não realiza operações com arquivos.
-- **Suíte modular local:** `suite/web/`, iniciada por `Iniciar_Suite.bat`, com a grade inicial e o fluxo funcional de Word para PDF.
+- **Aplicativo funcional:** `app.py` e `public/`, iniciados por `Start_Converter.bat`. Automatiza o Word instalado no Windows e oferece o fluxo de converter e juntar. A junção normalmente usa PDF-Lib no navegador.
+- **Prévia da suíte:** `outputs/suite-design-preview.html`, exportada para `outputs/design-preview.html` e aberta por `Preview_Design.bat`. Exibe as cinco ferramentas, mas ainda não realiza operações com arquivos.
+- **Suíte modular local:** `suite/web/`, iniciada por `Start_Suite.bat`, com a grade inicial e o fluxo funcional de Word para PDF.
 
-A primeira integração funcional da suíte agora está disponível em `Iniciar_Suite.bat`: grade inicial e Word para PDF com LibreOffice, fila local, PDFs individuais e ZIP. Consulte [a base modular](base-modular.md) para entender a implementação e testar. As outras quatro ferramentas continuam planejadas.
+A primeira integração funcional da suíte agora está disponível em `Start_Suite.bat`: grade inicial e Word para PDF com LibreOffice, fila local, PDFs individuais e ZIP. Consulte [a base modular](modular-foundation.md) para entender a implementação e testar. As outras quatro ferramentas continuam planejadas.
 
 Este documento define o que será implementado; não declara que a suíte funcional já está pronta.
 
-O laboratório da primeira etapa está disponível em `Testar_Conversao.bat`. Consulte [a prova de conversão](prova-conversao.md) para gerar exemplos, verificar o LibreOffice e registrar os resultados. A aprovação do motor continua pendente de testes reais e comparação visual.
+O laboratório da primeira etapa está disponível em `Test_Conversion.bat`. Consulte [a prova de conversão](conversion-validation.md) para gerar exemplos, verificar o LibreOffice e registrar os resultados. A aprovação do motor continua pendente de testes reais e comparação visual.
 
 ## Ferramentas e critérios de conclusão
 

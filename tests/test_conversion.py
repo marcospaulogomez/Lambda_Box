@@ -12,7 +12,7 @@ import zipfile
 from suite.conversion import ConversionError, LibreOfficeConverter, find_libreoffice
 from suite.conversion.samples import generate_samples
 from suite.conversion.libreoffice import _execute
-from validar_conversao import inspect_pdf, main, write_report
+from validate_conversion import inspect_pdf, main, write_report
 
 
 class ConversionTests(unittest.TestCase):
@@ -20,7 +20,7 @@ class ConversionTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
-        self.documents = generate_samples(self.root / "entrada")
+        self.documents = generate_samples(self.root / "input")
         self.converter = LibreOfficeConverter(sys.executable)
 
     def test_invalid_docx_is_rejected_before_launch(self):
@@ -49,7 +49,7 @@ class ConversionTests(unittest.TestCase):
 
     def test_html_renamed_to_pdf_is_not_published(self):
         def fake_engine(command, timeout):
-            (Path(command[command.index("--outdir") + 1]) / "entrada.pdf").write_bytes(b"<html>erro</html>")
+            (Path(command[command.index("--outdir") + 1]) / "input.pdf").write_bytes(b"<html>erro</html>")
             return subprocess.CompletedProcess(command, 0, "", "")
         with patch("suite.conversion.libreoffice._execute", side_effect=fake_engine):
             with self.assertRaisesRegex(ConversionError, "cabeçalho PDF"):
@@ -72,7 +72,7 @@ class ConversionTests(unittest.TestCase):
         original = self.documents[0].read_bytes()
         def fake_engine(command, timeout):
             profiles.append(next(value for value in command if value.startswith("-env:UserInstallation=")))
-            (Path(command[command.index("--outdir") + 1]) / "entrada.pdf").write_bytes(b"%PDF-1.7\nresultado ficticio de contrato")
+            (Path(command[command.index("--outdir") + 1]) / "input.pdf").write_bytes(b"%PDF-1.7\nresultado ficticio de contrato")
             return subprocess.CompletedProcess(command, 0, "", "")
         with patch("suite.conversion.libreoffice._execute", side_effect=fake_engine):
             first = self.converter.convert(self.documents[0], self.root / "primeiro")
@@ -166,7 +166,7 @@ class ConversionTests(unittest.TestCase):
             self.assertEqual(paragraph.find("w:pPr/w:jc", ns).attrib['{' + ns['w'] + '}val'], "left")
 
     def test_cli_can_generate_revised_examples_in_another_folder(self):
-        revised = self.root / "entrada-v2"
+        revised = self.root / "input-v2"
         original = self.documents[0].read_bytes()
         with patch("builtins.print"):
             result = main(["--gerar-exemplos", "--pasta-exemplos", str(revised)])
@@ -179,7 +179,7 @@ class ConversionTests(unittest.TestCase):
             self.assertEqual(main(["--entrada", str(self.root)]), 2)
 
     def test_help_works_with_legacy_console_encoding(self):
-        command = Path(__file__).resolve().parents[1] / "validar_conversao.py"
+        command = Path(__file__).resolve().parents[1] / "validate_conversion.py"
         result = subprocess.run(
             [sys.executable, str(command), "--help"], capture_output=True,
             env={**os.environ, "PYTHONIOENCODING": "cp1252"}, timeout=15,

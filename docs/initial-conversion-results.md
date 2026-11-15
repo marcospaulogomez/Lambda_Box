@@ -25,7 +25,7 @@ Os tempos incluem a operação local do adaptador, com criação de perfil exclu
 
 O motor ainda não está aprovado para a suíte pública. A prova confirma que a conversão pode ser executada localmente e que os resultados passaram nas verificações estruturais descritas.
 
-Os arquivos gerados e o relatório detalhado permanecem em `laboratorio/`, fora do Git. Para reproduzir, siga o [guia da prova](prova-conversao.md).
+Os arquivos gerados e o relatório detalhado permanecem em `laboratory/`, fora do Git. Para reproduzir, siga o [guia da prova](conversion-validation.md).
 
 ## Revisão após avaliação visual — 15/11/2026
 
@@ -35,7 +35,7 @@ A revisão do gerador passou a definir entrelinha de 1,15 e espaço de 8 pontos 
 
 Na estrutura do PDF anterior, a imagem começava aproximadamente 3,16 mm à direita do início do texto. No PDF revisado, a diferença horizontal medida foi de cerca de 0,035 mm. Essa medição verifica a posição nesse exemplo simples; não substitui a comparação visual no Word nem demonstra fidelidade para documentos arbitrários.
 
-Os novos originais ficam em `laboratorio/entrada-v2/`; os anteriores foram preservados. O relatório da conversão revisada é `laboratorio/resultados/20261115-135032-12e0b9a2/relatorio.html`. As páginas continuaram em 1, 1, 1, 1 e 2, respectivamente. Os 18 testes automatizados passaram. A aprovação visual da revisão continua pendente.
+Os novos originais ficam em `laboratory/input-v2/`; os anteriores foram preservados. O relatório da conversão revisada é `laboratory/results/20261115-135032-12e0b9a2/report.html`. As páginas continuaram em 1, 1, 1, 1 e 2, respectivamente. Os 18 testes automatizados passaram. A aprovação visual da revisão continua pendente.
 
 ### Desempenho local
 
@@ -52,6 +52,6 @@ O relatório avaliado pelo usuário (`20261115-132520-10494bf0`) somou 135,581 s
 
 Mais de 99% desse tempo ficou na execução do LibreOffice. Preparação, publicação do PDF e limpeza somaram menos de um segundo para o conjunto. A medição não separa inicialização de importação e exportação.
 
-Uma experiência local com os mesmos cinco DOCX revisados em uma única invocação do LibreOffice levou 32,549 segundos no total, com 32,337 segundos no motor. Os PDFs foram lidos pelo pypdf e mantiveram as contagens de páginas esperadas. O registro ficou em `laboratorio/benchmark-lote/a74c071d/medicao.json`.
+Uma experiência local com os mesmos cinco DOCX revisados em uma única invocação do LibreOffice levou 32,549 segundos no total, com 32,337 segundos no motor. Os PDFs foram lidos pelo pypdf e mantiveram as contagens de páginas esperadas. O registro ficou em `laboratory/batch-benchmark/a74c071d/measurement.json`.
 
 Foi uma execução exploratória, aproximadamente 76% mais rápida que a execução separada desses exemplos. Ela indica que evitar reinicializações é um caminho promissor, mas não mede concorrência, memória, fidelidade visual do lote ou capacidade do futuro servidor. O adaptador e o laboratório continuam usando uma execução por arquivo. O processamento em lote ainda precisa ser implementado e validado, incluindo tratamento de falhas por documento e isolamento de tarefas de usuários diferentes.

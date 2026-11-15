@@ -1,6 +1,6 @@
 # Base modular e primeiro fluxo funcional
 
-Esta etapa liga o visual azul aprovado a um fluxo completo de Word para PDF. O aplicativo anterior, iniciado por `Iniciar_Conversor.bat`, permanece disponível. A nova suíte usa `Iniciar_Suite.bat` e ainda é uma aplicação local em desenvolvimento.
+Esta etapa liga o visual azul aprovado a um fluxo completo de Word para PDF. O aplicativo anterior, iniciado por `Start_Converter.bat`, permanece disponível. A nova suíte usa `Start_Suite.bat` e ainda é uma aplicação local em desenvolvimento.
 
 ## Por que separar o código
 
@@ -60,8 +60,8 @@ O serviço escuta somente em `127.0.0.1`; os hosts e as origens aceitos também 
 
 ## Testar no navegador
 
-1. Execute `.\Iniciar_Suite.bat` na raiz e acesse a página aberta em `http://127.0.0.1:8090`.
-2. Entre em **Word para PDF** e selecione os cinco DOCX de `laboratorio/entrada-v2/`.
+1. Execute `.\Start_Suite.bat` na raiz e acesse a página aberta em `http://127.0.0.1:8090`.
+2. Entre em **Word para PDF** e selecione os cinco DOCX de `laboratory/input-v2/`.
 3. Confira nomes e tamanhos, remova e adicione um documento novamente.
 4. Clique em **Converter para PDF** e acompanhe os estados de fila e processamento.
 5. Baixe os PDFs e o ZIP. Confira a paginação esperada: 1, 1, 1, 1 e 2 páginas. Compare a aparência com os mesmos DOCX no Word.
@@ -78,10 +78,10 @@ Com as dependências de desenvolvimento instaladas e o servidor em execução:
 .\.venv\Scripts\python.exe scripts/check_web_flow.py
 ```
 
-Se usar outra porta, passe `--url http://127.0.0.1:8091`. O script usa documentos fictícios gerados por ele e salva as evidências em uma pasta nova de `laboratorio/fluxo-web/`, ignorada pelo Git. As cópias de verificação nessa pasta permanecem para análise; a exclusão testada é a dos arquivos temporários do serviço.
+Se usar outra porta, passe `--url http://127.0.0.1:8091`. O script usa documentos fictícios gerados por ele e salva as evidências em uma pasta nova de `laboratory/web-flow/`, ignorada pelo Git. As cópias de verificação nessa pasta permanecem para análise; a exclusão testada é a dos arquivos temporários do serviço.
 
-Na execução local de 15/11/2026, os cinco DOCX passaram pelo servidor HTTP real e pelo LibreOffice em lote: 35,558 segundos no adaptador e 36,879 segundos entre início do envio e obtenção do estado concluído. Os PDFs tiveram 1, 1, 1, 1 e 2 páginas. O ZIP correspondeu byte a byte aos downloads individuais, os originais permaneceram iguais e a exclusão bloqueou os downloads seguintes. Evidências locais: `laboratorio/fluxo-web/c9e9fa94/report.json`.
+Na execução local de 15/11/2026, os cinco DOCX passaram pelo servidor HTTP real e pelo LibreOffice em lote: 35,558 segundos no adaptador e 36,879 segundos entre início do envio e obtenção do estado concluído. Os PDFs tiveram 1, 1, 1, 1 e 2 páginas. O ZIP correspondeu byte a byte aos downloads individuais, os originais permaneceram iguais e a exclusão bloqueou os downloads seguintes. Evidências locais: `laboratory/web-flow/c9e9fa94/report.json`.
 
 Esses tempos não estimam a capacidade de uma hospedagem pública. A revisão visual pelo usuário continua necessária; a contagem de páginas não comprova fidelidade de formatação.
 
-Também foram executados 32 testes automatizados de contrato e integração HTTP. Na conferência com Chrome, a seleção dos cinco documentos, a conversão e a exclusão pela interface passaram sem exceções JavaScript capturadas. A tela e os resultados foram conferidos com viewport de 390 px, sem rolagem horizontal; a grade inicial também foi conferida em desktop. Capturas locais ficam em `laboratorio/preview-suite/`.
+Também foram executados 32 testes automatizados de contrato e integração HTTP. Na conferência com Chrome, a seleção dos cinco documentos, a conversão e a exclusão pela interface passaram sem exceções JavaScript capturadas. A tela e os resultados foram conferidos com viewport de 390 px, sem rolagem horizontal; a grade inicial também foi conferida em desktop. Capturas locais ficam em `laboratory/preview-suite/`.

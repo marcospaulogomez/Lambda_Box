@@ -191,16 +191,16 @@ class LibreOfficeConverter:
         if destination.exists():
             raise ConversionError(f"Já existe um resultado com esse nome: {destination.name}")
         started = time.perf_counter()
-        with tempfile.TemporaryDirectory(prefix="suite-conversao-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="suite-conversion-") as temporary:
             work = Path(temporary)
             # Nomes internos constantes evitam interpretar nomes de uploads como opções.
-            copied_source = work / "entrada.docx"
+            copied_source = work / "input.docx"
             shutil.copyfile(source, copied_source)
             converted_dir = work / "pdf"
             converted_dir.mkdir()
             engine_started = time.perf_counter()
             result = _execute([
-                str(self.executable), f"-env:UserInstallation={(work / 'perfil').as_uri()}",
+                str(self.executable), f"-env:UserInstallation={(work / 'profile').as_uri()}",
                 "--headless", "--nologo", "--nodefault", "--norestore",
                 "--convert-to", "pdf:writer_pdf_Export", "--outdir", str(converted_dir),
                 str(copied_source),
@@ -209,7 +209,7 @@ class LibreOfficeConverter:
             if result.returncode:
                 detail = (result.stderr or result.stdout or "Sem detalhes adicionais").strip()[-1500:]
                 raise ConversionError(f"O LibreOffice não concluiu a conversão (código {result.returncode}): {detail}")
-            generated = converted_dir / "entrada.pdf"
+            generated = converted_dir / "input.pdf"
             if not generated.is_file():
                 raise ConversionError("O LibreOffice terminou sem gerar o PDF. Verifique o documento.")
             with generated.open("rb") as stream:

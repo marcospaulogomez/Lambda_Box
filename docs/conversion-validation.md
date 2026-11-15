@@ -17,16 +17,16 @@ O aplicativo existente continua usando seu fluxo atual. Esta prova ainda não in
 
 Instalar o LibreOffice a partir da [página oficial](https://www.libreoffice.org/download/). O motor roda sem interface gráfica, conforme a [documentação de parâmetros](https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html).
 
-Neste ambiente de desenvolvimento, o motor foi extraído para `laboratorio/motor/` para avaliação local, sem uma instalação global. O atalho detecta `laboratorio/motor/program/soffice.com` automaticamente quando `LIBREOFFICE_PATH` não está definida. Essa extração não entra no Git; em outra máquina, instale o LibreOffice ou configure o caminho do executável.
+Neste ambiente de desenvolvimento, o motor foi extraído para `laboratory/engine/` para avaliação local, sem uma instalação global. O atalho detecta `laboratory/engine/program/soffice.com` automaticamente quando `LIBREOFFICE_PATH` não está definida. Essa extração não entra no Git; em outra máquina, instale o LibreOffice ou configure o caminho do executável.
 
 Para incluir a análise estrutural dos PDFs, criar um ambiente virtual e instalar a dependência da prova. Um ambiente virtual é uma pasta que mantém as dependências deste projeto separadas das de outros projetos.
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-validacao.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-validation.txt
 ```
 
-Não é necessário ativar o ambiente virtual: os comandos usam diretamente seu executável. `Testar_Conversao.bat` também dá preferência a ele.
+Não é necessário ativar o ambiente virtual: os comandos usam diretamente seu executável. `Test_Conversion.bat` também dá preferência a ele.
 
 A conversão pode rodar sem pypdf. Nesse caso, o relatório informa que a análise de páginas não foi executada. O pacote lê a estrutura dos PDFs; ele não valida a fidelidade visual. [Documentação do pypdf](https://pypdf.readthedocs.io/en/stable/).
 
@@ -35,27 +35,27 @@ A conversão pode rodar sem pypdf. Nesse caso, o relatório informa que a análi
 Para verificar a instalação:
 
 ```powershell
-.\Testar_Conversao.bat --diagnostico
+.\Test_Conversion.bat --diagnostics
 ```
 
 Para gerar os documentos e converter todos os exemplos:
 
 ```powershell
-.\Testar_Conversao.bat
+.\Test_Conversion.bat
 ```
 
-O comando imprime o caminho do `relatorio.html`. Abra esse arquivo no navegador, pelo Explorador de Arquivos. Os documentos ficam em `laboratorio/entrada/` e cada execução produz uma subpasta nova em `laboratorio/resultados/`.
+O comando imprime o caminho do `report.html`. Abra esse arquivo no navegador, pelo Explorador de Arquivos. Os documentos ficam em `laboratory/samples/` e cada execução produz uma subpasta nova em `laboratory/results/`.
 
 Para abrir diretamente o relatório mais recente, sem repetir as conversões:
 
 ```powershell
-.\Testar_Conversao.bat --relatorio
+.\Test_Conversion.bat --report
 ```
 
 Para gerar somente os originais, mesmo antes de instalar o LibreOffice:
 
 ```powershell
-.\Testar_Conversao.bat --gerar-exemplos
+.\Test_Conversion.bat --generate-samples
 ```
 
 Exemplos já existentes não são sobrescritos. Se quiser começar novamente, use uma cópia dos originais ou remova manualmente apenas os exemplos que deseja regenerar.
@@ -63,7 +63,7 @@ Exemplos já existentes não são sobrescritos. Se quiser começar novamente, us
 Para gerar e converter os exemplos revisados em outra pasta, preservando os anteriores:
 
 ```powershell
-.\Testar_Conversao.bat --pasta-exemplos .\laboratorio\entrada-v2
+.\Test_Conversion.bat --samples-dir .\laboratory\input-v2
 ```
 
 Os exemplos revisados definem explicitamente entrelinha de 1,15, espaço de 8 pontos após os parágrafos e alinhamento da imagem. O primeiro documento inclui três linhas dentro do mesmo parágrafo, para distinguir entrelinha de distância entre parágrafos. Essa formatação pertence aos documentos fictícios; o adaptador não aplica esses valores aos arquivos enviados pelo usuário.
@@ -72,12 +72,12 @@ O relatório agora separa preparação, execução do motor, cópia do PDF e lim
 
 ## Comparar com o Word
 
-1. Abra cada DOCX de `laboratorio/entrada/` no Word e confira que ele está íntegro.
-2. Exporte pelo Word para uma pasta `laboratorio/referencias-word/`, mantendo o mesmo nome-base. Por exemplo, `01-texto-e-fontes.docx` deve corresponder a `01-texto-e-fontes.pdf`.
+1. Abra cada DOCX de `laboratory/samples/` no Word e confira que ele está íntegro.
+2. Exporte pelo Word para uma pasta `laboratory/word-references/`, mantendo o mesmo nome-base. Por exemplo, `01-texto-e-fontes.docx` deve corresponder a `01-texto-e-fontes.pdf`.
 3. Execute:
 
 ```powershell
-.\Testar_Conversao.bat --referencias .\laboratorio\referencias-word
+.\Test_Conversion.bat --references .\laboratory\referencias-word
 ```
 
 4. No relatório, abra o PDF gerado e a referência. Compare fontes, acentos, margens, tabelas, proporções das imagens, orientação, cabeçalho, rodapé e quebras de página.
@@ -87,14 +87,14 @@ O quinto exemplo deve ter duas páginas. Na imagem, as áreas coloridas precisam
 
 Quantidades e dimensões iguais de páginas não provam que a formatação está igual. Referências ausentes ficam explicitamente indicadas no relatório.
 
-Ao comparar a revisão, use os DOCX de `laboratorio/entrada-v2/` e referências exportadas desses mesmos documentos. Informe `--pasta-exemplos .\laboratorio\entrada-v2` junto com `--referencias` para não converter os exemplos antigos por engano.
+Ao comparar a revisão, use os DOCX de `laboratory/input-v2/` e referências exportadas desses mesmos documentos. Informe `--samples-dir .\laboratory\input-v2` junto com `--references` para não converter os exemplos antigos por engano.
 
 ## Testar documentos próprios
 
 Use arquivos sem informações confidenciais para os primeiros testes:
 
 ```powershell
-.\Testar_Conversao.bat --entrada "C:\caminho\documentos"
+.\Test_Conversion.bat --input "C:\caminho\documentos"
 ```
 
 A busca considera apenas os DOCX diretamente nessa pasta e ignora os arquivos temporários do Word iniciados por `~$`. Os originais são copiados para uma área temporária; a conversão não modifica os documentos enviados.
@@ -102,7 +102,7 @@ A busca considera apenas os DOCX diretamente nessa pasta e ignora os arquivos te
 Se o executável não for encontrado automaticamente:
 
 ```powershell
-.\Testar_Conversao.bat --libreoffice "C:\Program Files\LibreOffice\program\soffice.com"
+.\Test_Conversion.bat --libreoffice "C:\Program Files\LibreOffice\program\soffice.com"
 ```
 
 Também é possível definir `LIBREOFFICE_PATH` para esse caminho. Para documentos mais demorados, há `--timeout 180`. O prazo padrão é 90 segundos por arquivo; ele é um limite desta prova local, não uma política final da suíte pública.

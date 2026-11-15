@@ -46,6 +46,9 @@ Após escolher a marca, integrar o cabeçalho, o favicon, os ícones de instala�
 
 ## Melhorias visuais registradas para depois
 
+- Aproveitar melhor a largura e a altura da página para reduzir a rolagem.
+- Na tela de Word para PDF, avaliar o progresso no topo e a lista de arquivos ao lado da área de trabalho.
+- Validar essa composição também no celular, mantendo os estados e os controles acessíveis.
 - Receber e integrar os ícones específicos que serão criados pelo autor.
 - Experimentar uma animação breve no ícone ao passar o mouse, como aumentar e retornar à escala original.
 - Definir também o comportamento com foco pelo teclado e respeitar a preferência por movimento reduzido.
@@ -55,7 +58,7 @@ Essas animações ainda não foram implementadas. Os tamanhos das fontes aprovad
 
 ## Como avaliar a prévia
 
-Executar `Testar_Visual.bat` na raiz do projeto. O arquivo abre a versão atual exportada em `outputs/testar-visual.html`.
+Executar `Preview_Design.bat` na raiz do projeto. O arquivo abre a versão atual exportada em `outputs/design-preview.html`.
 
 - Observar o equilíbrio entre ícone, título, descrição e espaço do cartão.
 - Avaliar os destaques ao passar o mouse e selecionar uma ferramenta.
@@ -63,7 +66,7 @@ Executar `Testar_Visual.bat` na raiz do projeto. O arquivo abre a versão atual 
 - Reduzir a janela para conferir a reorganização da grade.
 - Ampliar o navegador para 200% e conferir a leitura e os controles.
 
-A prévia não faz conversões. O aplicativo funcional continua disponível em `Iniciar_Conversor.bat`.
+A prévia não faz conversões. O aplicativo funcional continua disponível em `Start_Converter.bat`.
 
 ## Portfólio
 

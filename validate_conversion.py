@@ -34,7 +34,7 @@ def inspect_pdf(path: Path) -> dict:
 
 def write_report(directory: Path, report: dict) -> Path:
     directory.mkdir(parents=True, exist_ok=True)
-    (directory / "relatorio.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    (directory / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     rows = []
     for item in report["arquivos"]:
         source_link = f'<a href="{escape(Path(item["entrada"]).as_uri(), quote=True)}">DOCX</a>'
@@ -51,8 +51,8 @@ def write_report(directory: Path, report: dict) -> Path:
 <p><strong>Avaliação visual pendente.</strong> Abra os PDFs e compare fontes, margens, tabelas, imagens e quebras de página com os documentos no Word.</p>
 <div class="scroll"><table><thead><tr><th>Documento</th><th>Conversão</th><th>Tempo (s)</th><th>Páginas</th><th>Arquivos</th><th>Observação</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>
 <p>Contagens e dimensões iguais não garantem a mesma formatação. Os tempos são de execuções sequenciais locais, incluindo a inicialização do motor.</p>
-<small>Memória e concorrência não foram medidas nesta prova. O arquivo relatorio.json guarda os resultados desta execução.</small></body></html>'''
-    destination = directory / "relatorio.html"
+<small>Memória e concorrência não foram medidas nesta prova. O arquivo report.json guarda os resultados desta execução.</small></body></html>'''
+    destination = directory / "report.html"
     destination.write_text(html, encoding="utf-8")
     return destination
 
@@ -64,22 +64,22 @@ def main(argv: list[str] | None = None) -> int:
             stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Prova local de conversão DOCX → PDF com LibreOffice.")
     modes = parser.add_mutually_exclusive_group()
-    modes.add_argument("--diagnostico", action="store_true", help="Mostra o ambiente sem converter arquivos.")
-    modes.add_argument("--gerar-exemplos", action="store_true", help="Cria documentos fictícios e encerra.")
-    modes.add_argument("--relatorio", action="store_true", help="Abre o relatório mais recente no navegador, sem converter.")
-    parser.add_argument("--entrada", type=Path, help="Pasta com DOCX próprios; não gera exemplos nessa pasta.")
-    parser.add_argument("--pasta-exemplos", type=Path, default=BASE_DIR / "laboratorio" / "entrada", help="Pasta para gerar e usar exemplos fictícios, preservando os já existentes.")
-    parser.add_argument("--saida", type=Path, default=BASE_DIR / "laboratorio" / "resultados", help="Pasta-base de resultados; cada execução cria uma subpasta.")
-    parser.add_argument("--referencias", type=Path, help="Pasta de PDFs exportados no Word com os mesmos nomes dos DOCX.")
+    modes.add_argument("--diagnostics", "--diagnostico", dest="diagnostics", action="store_true", help="Mostra o ambiente sem converter arquivos.")
+    modes.add_argument("--generate-samples", "--gerar-exemplos", dest="generate_samples", action="store_true", help="Cria documentos fictícios e encerra.")
+    modes.add_argument("--report", "--relatorio", dest="report", action="store_true", help="Abre o relatório mais recente no navegador, sem converter.")
+    parser.add_argument("--input", "--entrada", dest="input", type=Path, help="Pasta com DOCX próprios; não gera exemplos nessa pasta.")
+    parser.add_argument("--samples-dir", "--pasta-exemplos", dest="samples_dir", type=Path, default=BASE_DIR / "laboratory" / "samples", help="Pasta para gerar e usar exemplos fictícios, preservando os já existentes.")
+    parser.add_argument("--output", "--saida", dest="output", type=Path, default=BASE_DIR / "laboratory" / "results", help="Pasta-base de resultados; cada execução cria uma subpasta.")
+    parser.add_argument("--references", "--referencias", dest="references", type=Path, help="Pasta de PDFs exportados no Word com os mesmos nomes dos DOCX.")
     parser.add_argument("--libreoffice", type=Path, help="Caminho do soffice.com/soffice, se instalado em outro local.")
     parser.add_argument("--timeout", type=float, default=90, help="Prazo em segundos por documento; padrão: 90.")
     args = parser.parse_args(argv)
     if args.timeout <= 0:
         parser.error("--timeout deve ser maior que zero")
-    if args.relatorio:
-        reports = list(args.saida.glob("*/relatorio.html"))
+    if args.report:
+        reports = list(args.output.glob("*/report.html"))
         if not reports:
-            print("Nenhum relatório encontrado. Execute Testar_Conversao.bat primeiro.")
+            print("Nenhum relatório encontrado. Execute Test_Conversion.bat primeiro.")
             return 2
         latest = max(reports, key=lambda path: path.stat().st_mtime).resolve()
         print(f"Relatório: {latest}")
@@ -88,7 +88,7 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         return 0
     converter = LibreOfficeConverter(args.libreoffice, timeout=args.timeout)
-    if args.diagnostico:
+    if args.diagnostics:
         print(f"Python: {platform.python_version()}")
         print(f"Executável Python: {sys.executable}")
         print(f"LibreOffice: {converter.executable or 'NÃO ENCONTRADO'}")
@@ -101,21 +101,21 @@ def main(argv: list[str] | None = None) -> int:
                 return 1
         return 0 if converter.executable else 2
 
-    input_dir = (args.entrada or args.pasta_exemplos).resolve()
-    if args.gerar_exemplos:
-        if args.entrada is not None:
+    input_dir = (args.input or args.samples_dir).resolve()
+    if args.generate_samples:
+        if args.input is not None:
             parser.error("--gerar-exemplos usa --pasta-exemplos; não combine com --entrada")
         for path in generate_samples(input_dir):
             print(path)
         print("Documentos fictícios prontos. Abra-os no Word para conferir os originais.")
         return 0
-    if args.entrada is None:
+    if args.input is None:
         generate_samples(input_dir)
     if not input_dir.is_dir():
         print(f"ERRO: pasta de entrada não encontrada: {input_dir}")
         return 2
-    if args.referencias is not None and not args.referencias.is_dir():
-        print(f"ERRO: pasta de referências não encontrada: {args.referencias}")
+    if args.references is not None and not args.references.is_dir():
+        print(f"ERRO: pasta de referências não encontrada: {args.references}")
         return 2
     sources = sorted((path for path in input_dir.iterdir() if path.is_file() and path.suffix.lower() == ".docx" and not path.name.startswith("~$")), key=lambda path: path.name.casefold())
     if not sources:
@@ -124,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     if converter.executable is None:
         print("LibreOffice não encontrado. Os DOCX de exemplo estão prontos em:")
         print(input_dir)
-        print("Instale o LibreOffice e execute novamente. Orientações: docs/prova-conversao.md")
+        print("Instale o LibreOffice e execute novamente. Orientações: docs/conversion-validation.md")
         return 2
     try:
         version = converter.version()
@@ -132,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERRO: {exc}")
         return 1
     stamp = datetime.now().astimezone()
-    run_dir = args.saida.resolve() / f"{stamp:%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
+    run_dir = args.output.resolve() / f"{stamp:%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
     report = {"criado_em": stamp.isoformat(timespec="seconds"), "python": platform.python_version(), "motor": version, "revisao_visual": "pendente", "memoria": "não medida", "concorrencia": "não testada", "arquivos": []}
     failed = False
     for index, source in enumerate(sources, start=1):
@@ -146,8 +146,8 @@ def main(argv: list[str] | None = None) -> int:
             except Exception as exc:
                 item.update({"status": "análise falhou", "erro": f"O PDF foi gerado, mas sua leitura falhou: {exc}"})
                 failed = True
-            if args.referencias:
-                reference = (args.referencias / f"{source.stem}.pdf").resolve()
+            if args.references:
+                reference = (args.references / f"{source.stem}.pdf").resolve()
                 if reference.is_file():
                     item["referencia"] = str(reference)
                     try:
