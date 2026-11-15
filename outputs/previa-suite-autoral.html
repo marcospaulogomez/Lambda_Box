@@ -1,0 +1,228 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+  #suite-authorial-preview {
+    --workshop-background: #101827;
+    --workshop-surface: #172334;
+    --workshop-hover: #1c2c40;
+    --workshop-line: #354355;
+    --workshop-text: #eef1f4;
+    --workshop-muted: #bac4cf;
+    --workshop-accent: #ebc77e;
+    --workshop-radius: 5px;
+    --workshop-icon: 52px;
+    --workshop-title: 26px;
+    background: var(--workshop-background);
+    color: var(--workshop-text);
+    color-scheme: dark;
+    font: 400 16px/1.5 "IBM Plex Sans", "Segoe UI", sans-serif;
+    overflow-wrap: break-word;
+  }
+  #suite-authorial-preview * { box-sizing: border-box; }
+  #suite-authorial-preview .workshop-wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+  #suite-authorial-preview .workshop-header { border-bottom: 1px solid var(--workshop-line); }
+  #suite-authorial-preview .workshop-header-inner {
+    min-height: 88px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+    padding-top: 18px; padding-bottom: 18px; padding-right: 120px;
+  }
+  #suite-authorial-preview .workshop-brand {
+    color: var(--workshop-text); font-size: 25px; font-weight: 600;
+    letter-spacing: -.04em; text-decoration: none;
+    padding-left: 14px; border-left: 4px solid var(--workshop-accent);
+  }
+  #suite-authorial-preview .workshop-nav {
+    color: var(--workshop-muted); font-size: 14px; text-decoration: none;
+    padding: 10px 0; border-bottom: 1px solid var(--workshop-accent);
+  }
+  #suite-authorial-preview .workshop-intro {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 24px; padding-top: 46px; padding-bottom: 34px;
+  }
+  #suite-authorial-preview h1 {
+    margin: 0; font-size: clamp(34px, 5.2vw, 58px); line-height: 1.05;
+    font-weight: 500; letter-spacing: -.045em;
+  }
+  #suite-authorial-preview .workshop-intro p {
+    margin: 0; color: var(--workshop-muted); max-width: 330px;
+    font-size: 16px; line-height: 1.6;
+  }
+  #suite-authorial-preview .workshop-grid {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
+  }
+  #suite-authorial-preview .workshop-tool {
+    position: relative; width: 100%; min-width: 0;
+    min-height: 264px; padding: 22px;
+    border: 1px solid var(--workshop-line); border-radius: var(--workshop-radius);
+    background: var(--workshop-surface); color: var(--workshop-text);
+    font: inherit; text-align: left;
+    display: flex; flex-direction: column; align-items: stretch;
+  }
+  #suite-authorial-preview .workshop-tool:hover,
+  #suite-authorial-preview .workshop-tool[aria-pressed="true"] {
+    background: var(--workshop-hover); border-color: var(--tool-ink);
+  }
+  #suite-authorial-preview .workshop-tool:focus-visible,
+  #suite-authorial-preview a:focus-visible,
+  #suite-authorial-preview summary:focus-visible {
+    outline: 2px solid var(--workshop-accent); outline-offset: 4px;
+  }
+  #suite-authorial-preview .workshop-tool-top {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    min-height: var(--workshop-icon);
+  }
+  #suite-authorial-preview .workshop-tool-icon {
+    color: var(--tool-ink); display: inline-flex; align-items: center;
+    justify-content: flex-start; width: var(--workshop-icon); height: var(--workshop-icon);
+  }
+  #suite-authorial-preview .workshop-tool-icon svg {
+    width: var(--workshop-icon) !important; height: var(--workshop-icon) !important; stroke-width: 1.65;
+  }
+  #suite-authorial-preview .workshop-tool-label {
+    font: 400 11px/1.5 "IBM Plex Mono", Consolas, monospace;
+    letter-spacing: .04em; color: var(--workshop-muted); padding-top: 5px;
+  }
+  #suite-authorial-preview .workshop-tool-name {
+    display: block; font-size: var(--workshop-title); font-weight: 500;
+    letter-spacing: -.035em; line-height: 1.2; margin-top: 12px;
+  }
+  #suite-authorial-preview .workshop-tool-description {
+    display: block; font-size: 15px; line-height: 1.55; color: var(--workshop-muted);
+    margin-top: 8px; margin-bottom: 16px; max-width: 27ch;
+  }
+  #suite-authorial-preview .workshop-tool-bottom {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-top: auto; padding-top: 12px; border-top: 1px solid var(--workshop-line);
+    font: 400 11px/1.5 "IBM Plex Mono", Consolas, monospace; color: var(--workshop-muted);
+  }
+  #suite-authorial-preview .workshop-tool-bottom svg { width: 21px !important; height: 21px !important; color: var(--tool-ink); }
+  #suite-authorial-preview .workshop-status {
+    min-height: 28px; margin: 22px 0 0; color: var(--workshop-muted); font-size: 13px;
+  }
+  #suite-authorial-preview .workshop-footer {
+    margin-top: 28px; padding-top: 20px; padding-bottom: 28px;
+    border-top: 1px solid var(--workshop-line); color: var(--workshop-muted);
+    font-size: 13px; display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  #suite-authorial-preview .workshop-footer p { margin: 0; }
+  #suite-authorial-preview .workshop-about { max-width: 390px; }
+  #suite-authorial-preview .workshop-about summary { color: var(--workshop-text); padding: 2px 0; }
+  #suite-authorial-preview .workshop-about p { margin-top: 12px; line-height: 1.7; }
+  @media (max-width: 1000px) {
+    #suite-authorial-preview .workshop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #suite-authorial-preview .workshop-wrap { padding-left: 28px; padding-right: 28px; }
+    #suite-authorial-preview .workshop-header-inner { padding-right: 110px; }
+    #suite-authorial-preview .workshop-intro { align-items: flex-start; flex-direction: column; gap: 18px; }
+    #suite-authorial-preview .workshop-intro p { max-width: 450px; }
+  }
+  @media (max-width: 680px) {
+    #suite-authorial-preview .workshop-grid { grid-template-columns: 1fr; }
+    #suite-authorial-preview .workshop-wrap { padding-left: 20px; padding-right: 20px; }
+    #suite-authorial-preview .workshop-header-inner { padding-right: 110px; gap: 18px; }
+    #suite-authorial-preview .workshop-nav { font-size: 13px; }
+    #suite-authorial-preview .workshop-tool { min-height: 264px; }
+    #suite-authorial-preview .workshop-intro { padding-top: 30px; padding-bottom: 28px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    #suite-authorial-preview .workshop-tool { transition: background .15s ease, border-color .15s ease; }
+  }
+</style>
+<div id="suite-authorial-preview" aria-label="Direção visual azul com tipografia e ícones ampliados">
+  <header class="workshop-header">
+    <div class="workshop-wrap workshop-header-inner">
+      <a class="workshop-brand cursor-interaction" href="#workshop-tools">Suíte</a>
+      <a class="workshop-nav cursor-interaction" href="#workshop-tools">Ferramentas</a>
+    </div>
+  </header>
+  <main class="workshop-wrap" id="workshop-tools">
+    <div class="workshop-intro">
+      <h1>Ferramentas</h1>
+      <p>Para converter documentos, organizar PDFs e compartilhar informações.</p>
+    </div>
+    <div class="workshop-grid" aria-label="Escolha uma ferramenta">
+      <button class="workshop-tool cursor-interaction" type="button" data-tool="Word para PDF" aria-pressed="false" style="--tool-ink: #9fbff2">
+        <span class="workshop-tool-top"><span class="workshop-tool-icon"><i data-lucide="file-type-2" aria-hidden="true"></i></span><span class="workshop-tool-label">DOCUMENTOS</span></span>
+        <span class="workshop-tool-name">Word para PDF</span>
+        <span class="workshop-tool-description">Converta arquivos Word em PDFs individuais.</span>
+        <span class="workshop-tool-bottom"><span>WORD → PDF</span><i data-lucide="arrow-right" aria-hidden="true"></i></span>
+      </button>
+      <button class="workshop-tool cursor-interaction" type="button" data-tool="Juntar PDFs" aria-pressed="false" style="--tool-ink: #e9a48d">
+        <span class="workshop-tool-top"><span class="workshop-tool-icon"><i data-lucide="files" aria-hidden="true"></i></span><span class="workshop-tool-label">PDF</span></span>
+        <span class="workshop-tool-name">Juntar PDFs</span>
+        <span class="workshop-tool-description">Una seus PDFs na ordem que escolher.</span>
+        <span class="workshop-tool-bottom"><span>VÁRIOS PDFs → UM PDF</span><i data-lucide="arrow-right" aria-hidden="true"></i></span>
+      </button>
+      <button class="workshop-tool cursor-interaction" type="button" data-tool="Converter e juntar" aria-pressed="false" style="--tool-ink: #e9a48d">
+        <span class="workshop-tool-top"><span class="workshop-tool-icon"><i data-lucide="combine" aria-hidden="true"></i></span><span class="workshop-tool-label">DOCUMENTOS / PDF</span></span>
+        <span class="workshop-tool-name">Converter e juntar</span>
+        <span class="workshop-tool-description">Converta documentos Word e gere um único PDF.</span>
+        <span class="workshop-tool-bottom"><span>WORD → UM PDF</span><i data-lucide="arrow-right" aria-hidden="true"></i></span>
+      </button>
+      <button class="workshop-tool cursor-interaction" type="button" data-tool="Imagens para PDF" aria-pressed="false" style="--tool-ink: #9ac8ad">
+        <span class="workshop-tool-top"><span class="workshop-tool-icon"><i data-lucide="images" aria-hidden="true"></i></span><span class="workshop-tool-label">IMAGENS</span></span>
+        <span class="workshop-tool-name">Imagens para PDF</span>
+        <span class="workshop-tool-description">Transforme suas imagens em páginas de um PDF.</span>
+        <span class="workshop-tool-bottom"><span>IMAGENS → PDF</span><i data-lucide="arrow-right" aria-hidden="true"></i></span>
+      </button>
+      <button class="workshop-tool cursor-interaction" type="button" data-tool="Gerar QR Code" aria-pressed="false" style="--tool-ink: #ebc77e">
+        <span class="workshop-tool-top"><span class="workshop-tool-icon"><i data-lucide="qr-code" aria-hidden="true"></i></span><span class="workshop-tool-label">QR CODE</span></span>
+        <span class="workshop-tool-name">Gerar QR Code</span>
+        <span class="workshop-tool-description">Gere um código para compartilhar links ou textos.</span>
+        <span class="workshop-tool-bottom"><span>LINK OU TEXTO → QR</span><i data-lucide="arrow-right" aria-hidden="true"></i></span>
+      </button>
+    </div>
+    <p class="workshop-status" aria-live="polite">Prévia visual. Selecione um cartão para avaliar seu destaque.</p>
+    <footer class="workshop-footer">
+      <p>Documentos · Imagens · QR Code</p>
+      <details class="workshop-about">
+        <summary class="cursor-interaction">Sobre o projeto</summary>
+        <p>Uma suíte em desenvolvimento para facilitar tarefas com arquivos. O projeto reúne aprendizado em Python, documentação aberta e a proposta de um serviço para a comunidade.</p>
+      </details>
+    </footer>
+  </main>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('suite-authorial-preview');
+  const buttons = Array.from(root.querySelectorAll('[data-tool]'));
+  const status = root.querySelector('.workshop-status');
+  let selected = '';
+  const showSelection = () => {
+    buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.tool === selected)));
+    status.textContent = selected
+      ? `${selected} selecionado. Esta prévia avalia a interface; não processa arquivos.`
+      : 'Prévia visual. Selecione um cartão para avaliar seu destaque.';
+  };
+  const applySaved = snapshot => {
+    const value = snapshot?.modelContent?.ferramenta;
+    if (typeof value !== 'string') return;
+    selected = buttons.some(button => button.dataset.tool === value) ? value : '';
+    showSelection();
+  };
+  applySaved(window.openai?.widgetState);
+  window.addEventListener('openai:set_globals', event => {
+    if (event.detail?.globals?.widgetState) applySaved(event.detail.globals.widgetState);
+  });
+  root.addEventListener('click', event => {
+    const button = event.target.closest('[data-tool]');
+    if (!button || !root.contains(button)) return;
+    selected = button.dataset.tool;
+    showSelection();
+    if (window.openai?.setWidgetState) {
+      window.openai.setWidgetState({ modelContent: { direcao: 'Azul com tipografia ampliada', ferramenta: selected }, privateContent: null }).catch(() => {});
+    }
+  });
+  const design = { icon: 52, title: 26, radius: 5 };
+  const render = () => {
+    root.style.setProperty('--workshop-icon', `${design.icon}px`);
+    root.style.setProperty('--workshop-title', `${design.title}px`);
+    root.style.setProperty('--workshop-radius', `${design.radius}px`);
+  };
+  render();
+  if (globalThis.Tweak) {
+    const tweak = new Tweak({ container: root, onChange: render });
+    tweak.addSlider(design, 'icon', { label: 'Tamanho dos ícones', min: 40, max: 64, unit: 'px' });
+    tweak.addSlider(design, 'title', { label: 'Títulos das ferramentas', min: 22, max: 30, unit: 'px' });
+    tweak.addSlider(design, 'radius', { label: 'Cantos dos cartões', min: 0, max: 12, unit: 'px' });
+  }
+})();
+</script>

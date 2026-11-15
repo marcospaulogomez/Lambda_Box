@@ -1,0 +1,177 @@
+<style>
+  #suite-dark-preview { width: 100%; }
+  #suite-dark-preview .suite-screen {
+    --suite-bg: #101827; --suite-surface: #182335; --suite-hover: #1e2d43;
+    --suite-border: #2c3a4d; --suite-text: #eff3f9; --suite-muted: #b0bdce;
+    --suite-accent: #7aafff; --suite-radius: 12px;
+    background: var(--suite-bg); color: var(--suite-text);
+    font: 400 14px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 740px; border-radius: 12px; overflow-wrap: anywhere;
+    color-scheme: dark;
+  }
+  #suite-dark-preview .suite-screen.graphite {
+    --suite-bg: #18191c; --suite-surface: #222428; --suite-hover: #2a2d32;
+    --suite-border: #393d44; --suite-muted: #b9bec8; --suite-accent: #9dbbff;
+  }
+  #suite-dark-preview .suite-screen * { box-sizing: border-box; }
+  #suite-dark-preview .suite-screen [hidden] { display: none; }
+  #suite-dark-preview .suite-header {
+    padding: 21px 120px 21px 30px; border-bottom: 1px solid var(--suite-border);
+    display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+  }
+  #suite-dark-preview .suite-brand { display: flex; align-items: center; gap: 9px; font-weight: 600; }
+  #suite-dark-preview .suite-brand svg { color: var(--suite-accent); }
+  #suite-dark-preview .suite-nav { color: var(--suite-muted); font-size: 12px; }
+  #suite-dark-preview .suite-main { padding: 38px 30px 28px; }
+  #suite-dark-preview .suite-hero { margin: 0 0 28px; max-width: 630px; }
+  #suite-dark-preview .suite-kicker { margin: 0 0 9px; color: var(--suite-accent); font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+  #suite-dark-preview h2 { margin: 0 0 12px; font-size: clamp(25px, 3.4vw, 34px); font-weight: 600; line-height: 1.2; letter-spacing: -.035em; }
+  #suite-dark-preview .suite-subtitle { margin: 0; color: var(--suite-muted); font-size: 14px; }
+  #suite-dark-preview .suite-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  #suite-dark-preview .suite-tool {
+    font: inherit; text-align: left; color: var(--suite-text); background: var(--suite-surface);
+    border: 1px solid var(--suite-border); border-radius: var(--suite-radius);
+    padding: 21px; min-width: 0; min-height: 181px; display: flex; flex-direction: column;
+    align-items: flex-start; gap: 10px;
+  }
+  #suite-dark-preview .suite-tool:hover { background: var(--suite-hover); border-color: var(--suite-accent); }
+  #suite-dark-preview .suite-tool[aria-pressed="true"] { border-color: var(--suite-accent); background: var(--suite-hover); }
+  #suite-dark-preview .suite-tool:focus-visible { outline: 2px solid var(--suite-accent); outline-offset: 3px; }
+  #suite-dark-preview .suite-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
+    border-radius: 9px; color: var(--icon-color); background: color-mix(in srgb, var(--icon-color) 12%, var(--suite-surface));
+  }
+  #suite-dark-preview .suite-icon svg { width: 22px; height: 22px; }
+  #suite-dark-preview .suite-name { display: flex; width: 100%; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+  #suite-dark-preview .suite-name > svg { margin-left: auto; flex-shrink: 0; color: var(--suite-muted); width: 14px; height: 14px; }
+  #suite-dark-preview .suite-description { font-size: 12px; color: var(--suite-muted); line-height: 1.6; }
+  #suite-dark-preview .suite-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--suite-border); color: var(--suite-muted); font-size: 12px; }
+  #suite-dark-preview .graphite .suite-hero { margin: 0 auto 30px; text-align: center; }
+  #suite-dark-preview .graphite .suite-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #suite-dark-preview .graphite .suite-tool { display: grid; grid-template-columns: 38px minmax(0, 1fr); column-gap: 15px; row-gap: 6px; min-height: 119px; padding: 19px; align-content: center; }
+  #suite-dark-preview .graphite .suite-icon { grid-row: 1 / 3; }
+  #suite-dark-preview .graphite .suite-description { grid-column: 2; }
+  @media (max-width: 650px) {
+    #suite-dark-preview .suite-screen { min-height: 980px; }
+    #suite-dark-preview .suite-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #suite-dark-preview .suite-main { padding: 28px 20px 24px; }
+    #suite-dark-preview .suite-header { padding-left: 20px; gap: 8px; }
+    #suite-dark-preview .suite-tool { padding: 16px; min-height: 180px; }
+    #suite-dark-preview .graphite .suite-grid { grid-template-columns: 1fr; }
+    #suite-dark-preview .suite-nav { display: none; }
+  }
+  @media (max-width: 390px) {
+    #suite-dark-preview .suite-screen { min-height: 1120px; }
+    #suite-dark-preview .suite-grid { grid-template-columns: 1fr; }
+    #suite-dark-preview .suite-tool { min-height: 130px; padding: 15px; gap: 7px; }
+    #suite-dark-preview .suite-main { padding-left: 16px; padding-right: 16px; }
+    #suite-dark-preview .suite-name { font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    #suite-dark-preview .suite-tool { transition: background .15s ease, border-color .15s ease; }
+  }
+</style>
+<div id="suite-dark-preview">
+  <div class="viz-carousel" aria-label="Direções visuais da suíte" data-previous-label="Anterior" data-next-label="Próxima">
+    <section data-variant="Azul profundo · grade ampla" aria-label="Azul profundo com grade ampla">
+      <div class="suite-screen" aria-label="Aparência azul profundo">
+        <header class="suite-header">
+          <div class="suite-brand"><i data-lucide="layers" aria-hidden="true"></i><span>Suíte de ferramentas</span></div>
+          <span class="suite-nav">Todas as ferramentas</span>
+        </header>
+        <main class="suite-main">
+          <div class="suite-hero">
+            <p class="suite-kicker">Documentos · Imagens · QR Code</p>
+            <h2>O que você quer fazer hoje?</h2>
+            <p class="suite-subtitle">Converta documentos, reúna PDFs e crie QR Codes em um só lugar.</p>
+          </div>
+          <div class="suite-grid" aria-label="Ferramentas da primeira versão">
+            <button class="suite-tool cursor-interaction" type="button" aria-pressed="false" data-tool="Word para PDF" style="--icon-color: #8bb7ff">
+              <span class="suite-icon"><i data-lucide="file-text" aria-hidden="true"></i></span>
+              <span class="suite-name">Word para PDF<i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+              <span class="suite-description">Transforme documentos Word em arquivos PDF individuais.</span>
+            </button>
+            <button class="suite-tool cursor-interaction" type="button" aria-pressed="false" data-tool="Juntar PDFs" style="--icon-color: #ff9b8b">
+              <span class="suite-icon"><i data-lucide="combine" aria-hidden="true"></i></span>
+              <span class="suite-name">Juntar PDFs<i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+              <span class="suite-description">Reúna vários PDFs em um arquivo, na ordem que escolher.</span>
+            </button>
+            <button class="suite-tool cursor-interaction" type="button" aria-pressed="false" data-tool="Converter e juntar" style="--icon-color: #ff9b8b">
+              <span class="suite-icon"><i data-lucide="workflow" aria-hidden="true"></i></span>
+              <span class="suite-name">Converter e juntar<i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+              <span class="suite-description">Converta documentos Word e una os resultados em um único PDF.</span>
+            </button>
+            <button class="suite-tool cursor-interaction" type="button" aria-pressed="false" data-tool="Imagens para PDF" style="--icon-color: #87d7b4">
+              <span class="suite-icon"><i data-lucide="images" aria-hidden="true"></i></span>
+              <span class="suite-name">Imagens para PDF<i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+              <span class="suite-description">Organize suas imagens e transforme-as em um documento PDF.</span>
+            </button>
+            <button class="suite-tool cursor-interaction" type="button" aria-pressed="false" data-tool="Gerar QR Code" style="--icon-color: #efd18a">
+              <span class="suite-icon"><i data-lucide="qr-code" aria-hidden="true"></i></span>
+              <span class="suite-name">Gerar QR Code<i data-lucide="arrow-up-right" aria-hidden="true"></i></span>
+              <span class="suite-description">Crie um QR Code para um link ou texto e baixe a imagem.</span>
+            </button>
+          </div>
+          <footer class="suite-footer" aria-live="polite">Prévia de aparência · selecione uma ferramenta para experimentar o destaque.</footer>
+        </main>
+      </div>
+    </section>
+    <section data-variant="Cinza grafite · grade compacta" aria-label="Cinza grafite com grade compacta" hidden>
+      <div class="suite-screen graphite" aria-label="Aparência cinza grafite"></div>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('suite-dark-preview');
+  const source = root.querySelector('.suite-screen');
+  const graphite = root.querySelector('.graphite');
+  graphite.innerHTML = source.innerHTML;
+  const screenList = Array.from(root.querySelectorAll('.suite-screen'));
+  let selected = '';
+  const renderSelection = () => {
+    screenList.forEach(screen => {
+      screen.querySelectorAll('[data-tool]').forEach(button => {
+        button.setAttribute('aria-pressed', String(button.dataset.tool === selected));
+      });
+      screen.querySelector('.suite-footer').textContent = selected
+        ? `${selected} selecionado · prévia visual, sem processamento de arquivos.`
+        : 'Prévia de aparência · selecione uma ferramenta para experimentar o destaque.';
+    });
+  };
+  const applySaved = snapshot => {
+    const saved = snapshot && snapshot.modelContent;
+    if (!saved || typeof saved.ferramenta !== 'string') return;
+    const valid = Array.from(source.querySelectorAll('[data-tool]')).some(button => button.dataset.tool === saved.ferramenta);
+    selected = valid ? saved.ferramenta : '';
+    renderSelection();
+  };
+  applySaved(window.openai?.widgetState);
+  window.addEventListener('openai:set_globals', event => {
+    if (event.detail?.globals?.widgetState) applySaved(event.detail.globals.widgetState);
+  });
+  root.addEventListener('click', event => {
+    const button = event.target.closest('[data-tool]');
+    if (!button || !root.contains(button)) return;
+    selected = button.dataset.tool;
+    renderSelection();
+    if (window.openai?.setWidgetState) {
+      window.openai.setWidgetState({ modelContent: { ferramenta: selected }, privateContent: null }).catch(() => {});
+    }
+  });
+  screenList.forEach(screen => {
+    const values = { radius: 12, accent: screen.classList.contains('graphite') ? '#9dbbff' : '#7aafff' };
+    const render = () => {
+      screen.style.setProperty('--suite-radius', `${values.radius}px`);
+      screen.style.setProperty('--suite-accent', values.accent);
+    };
+    render();
+    if (globalThis.Tweak) {
+      const tweak = new Tweak({ container: screen, onChange: render });
+      tweak.addSlider(values, 'radius', { label: 'Cantos dos cartões', min: 2, max: 22, unit: 'px' });
+      tweak.addColorPicker(values, 'accent', { label: 'Cor de destaque', reference: '--suite-accent' });
+    }
+  });
+  if (globalThis.lucide) lucide.createIcons({ attrs: { width: 18, height: 18 } });
+})();
+</script>
