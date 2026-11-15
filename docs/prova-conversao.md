@@ -60,6 +60,16 @@ Para gerar somente os originais, mesmo antes de instalar o LibreOffice:
 
 Exemplos já existentes não são sobrescritos. Se quiser começar novamente, use uma cópia dos originais ou remova manualmente apenas os exemplos que deseja regenerar.
 
+Para gerar e converter os exemplos revisados em outra pasta, preservando os anteriores:
+
+```powershell
+.\Testar_Conversao.bat --pasta-exemplos .\laboratorio\entrada-v2
+```
+
+Os exemplos revisados definem explicitamente entrelinha de 1,15, espaço de 8 pontos após os parágrafos e alinhamento da imagem. O primeiro documento inclui três linhas dentro do mesmo parágrafo, para distinguir entrelinha de distância entre parágrafos. Essa formatação pertence aos documentos fictícios; o adaptador não aplica esses valores aos arquivos enviados pelo usuário.
+
+O relatório agora separa preparação, execução do motor, cópia do PDF e limpeza. O tempo do motor inclui iniciar o processo, preparar o perfil, importar o DOCX, exportar o PDF e encerrar; não mede apenas a renderização.
+
 ## Comparar com o Word
 
 1. Abra cada DOCX de `laboratorio/entrada/` no Word e confira que ele está íntegro.
@@ -76,6 +86,8 @@ Exemplos já existentes não são sobrescritos. Se quiser começar novamente, us
 O quinto exemplo deve ter duas páginas. Na imagem, as áreas coloridas precisam manter a proporção horizontal de 2:1. O quarto exemplo deve ter uma página em paisagem.
 
 Quantidades e dimensões iguais de páginas não provam que a formatação está igual. Referências ausentes ficam explicitamente indicadas no relatório.
+
+Ao comparar a revisão, use os DOCX de `laboratorio/entrada-v2/` e referências exportadas desses mesmos documentos. Informe `--pasta-exemplos .\laboratorio\entrada-v2` junto com `--referencias` para não converter os exemplos antigos por engano.
 
 ## Testar documentos próprios
 
