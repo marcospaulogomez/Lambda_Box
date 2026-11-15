@@ -1,6 +1,6 @@
 # Suíte de ferramentas (converter e juntar arquivos, gerar qr code)
 
-Projeto em desenvolvimento para aprendizado em Python, portfólio e futura disponibilização à comunidade. O nome e a marca serão definidos depois.
+Projeto em desenvolvimento para aprendizado em Python, portfólio e futura disponibilização à comunidade. O nome e a marca serão definidos posteriormente.
 
 ## Estado atual
 
