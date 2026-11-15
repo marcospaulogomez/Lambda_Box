@@ -47,6 +47,7 @@ Após escolher a marca, integrar o cabeçalho, o favicon, os ícones de instala�
 ## Melhorias visuais registradas para depois
 
 - Aproveitar melhor a largura e a altura da página para reduzir a rolagem.
+- Reduzir a largura e a altura dos cartões da grade, hoje considerados grandes pelo autor, preservando a legibilidade dos textos e ícones. Avaliar mais cartões por linha em telas amplas.
 - Na tela de Word para PDF, avaliar o progresso no topo e a lista de arquivos ao lado da área de trabalho.
 - Validar essa composição também no celular, mantendo os estados e os controles acessíveis.
 - Receber e integrar os ícones específicos que serão criados pelo autor.

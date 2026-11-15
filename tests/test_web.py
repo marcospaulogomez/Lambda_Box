@@ -80,9 +80,16 @@ class WebTests(unittest.TestCase):
         home = self.client.get("/")
         self.assertEqual(home.status_code, 200)
         self.assertIn('href="/word-to-pdf"', home.text)
-        self.assertEqual(home.text.count("EM BREVE"), 4)
-        self.assertEqual(self.client.get("/word-to-pdf").status_code, 200)
-        self.assertEqual(self.client.get("/static/word-to-pdf.js").status_code, 200)
+        self.assertEqual(home.text.count("EM BREVE"), 2)
+        for operation, accept, minimum in [("word-to-pdf", ".docx", 1), ("merge-pdfs", ".pdf", 2), ("convert-and-merge", ".docx,.pdf", 2)]:
+            with self.subTest(operation=operation):
+                self.assertIn(f'href="/{operation}"', home.text)
+                page = self.client.get(f"/{operation}")
+                self.assertEqual(page.status_code, 200)
+                self.assertIn(f'data-operation="{operation}"', page.text)
+                self.assertIn(f'accept="{accept}"', page.text)
+                self.assertIn(f'data-min-files="{minimum}"', page.text)
+        self.assertEqual(self.client.get("/static/document-tool.js").status_code, 200)
 
     def test_single_document_download_delete_and_input_cleanup(self):
         job = self.finish(self.send())

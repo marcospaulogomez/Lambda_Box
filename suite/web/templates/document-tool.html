@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ tool.title }}{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='/document-tool.js') }}" defer></script>{% endblock %}
+{% block content %}
+  <a class="back-link" href="/">← Todas as ferramentas</a>
+  <div class="intro tool-intro"><h1>{{ tool.title }}</h1><p>{{ tool.description }}</p></div>
+  <section class="workspace" id="converter" data-operation="{{ operation }}" data-min-files="{{ tool.min_files }}" data-reorder="{{ 'true' if tool.reorder else 'false' }}" data-progress="{{ tool.progress }}" data-max-files="{{ settings.max_files }}" data-max-file-bytes="{{ settings.max_file_bytes }}" data-max-total-bytes="{{ settings.max_total_bytes }}">
+    <form id="conversion-form" novalidate>
+      <fieldset id="file-controls">
+        <legend class="sr-only">Selecionar documentos</legend>
+        <label class="drop-zone" id="drop-zone" for="file-input">
+          <span class="drop-symbol" aria-hidden="true">↑</span>
+          <span class="drop-title">Escolha seus documentos</span>
+          <span class="muted">Clique para selecionar ou arraste os arquivos para cá.</span>
+          <input id="file-input" type="file" name="files" accept="{{ tool.accept }}" multiple aria-describedby="file-limits">
+        </label>
+        <p class="file-limits" id="file-limits">{{ tool.formats }} · {{ tool.min_files }} a {{ settings.max_files }} arquivos · {{ settings.max_file_bytes // (1024 * 1024) }} MB por arquivo · {{ settings.max_total_bytes // (1024 * 1024) }} MB no total{% if tool.reorder %} · até {{ settings.max_pdf_pages }} páginas no resultado{% endif %}</p>
+        {% if tool.reorder %}<p class="file-limits" id="order-hint">A ordem abaixo será a ordem do PDF final. Use ↑ e ↓ para mover os arquivos.</p>{% endif %}
+        <div class="selection-heading"><p id="selection-summary" role="status">Nenhum documento selecionado.</p><button type="button" class="text-button" id="clear-selection" hidden>Limpar seleção</button></div>
+        <ul id="file-list" class="file-list" aria-label="Documentos selecionados"></ul>
+      </fieldset>
+      <div class="actions"><button class="button primary" id="convert-button" type="submit" disabled>{{ tool.action }}</button><span class="muted">Os originais permanecem intactos.</span></div>
+    </form>
+    <p class="notice error" id="error-message" role="alert" hidden></p>
+    <p class="notice error" id="engine-message" role="status" hidden></p>
+    <section id="job-progress" class="job-progress" hidden aria-labelledby="progress-title">
+      <h2 id="progress-title" tabindex="-1">Preparando arquivos</h2>
+      <p id="progress-message" role="status" aria-live="polite"></p>
+      <progress aria-label="Processamento em andamento"></progress>
+      <button class="button" id="retry-status" type="button" hidden>Consultar andamento novamente</button>
+    </section>
+    <section id="results" class="results" hidden aria-labelledby="results-title">
+      <h2 id="results-title" tabindex="-1">{{ tool.result }}</h2>
+      <p id="result-summary" class="muted"></p>
+      <a class="button primary" id="download-archive" hidden>Baixar todos em ZIP</a>
+      <ul id="download-list" class="file-list" aria-label="Resultados para download"></ul>
+    </section>
+    <div class="actions" id="job-actions" hidden><button class="button" id="new-conversion" type="button">Iniciar outra tarefa</button><button class="text-button" id="delete-job" type="button">Excluir arquivos desta tarefa</button></div>
+    <p class="retention-note">Os resultados ficam disponíveis por {{ settings.retention_seconds // 60 }} minutos após o processamento. Você também pode excluí-los ao terminar.</p>
+  </section>
+  <noscript><p class="notice error">Ative o JavaScript para enviar os documentos e acompanhar o processamento.</p></noscript>
+{% endblock %}

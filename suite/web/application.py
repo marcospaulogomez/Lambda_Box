@@ -15,6 +15,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from suite.conversion import LibreOfficeConverter
 from suite.services.documents import DocumentService, ServiceError
 from suite.settings import Settings
+from suite.web.tools import DOCUMENT_TOOLS
 
 
 WEB_ROOT = Path(__file__).resolve().parent
@@ -131,11 +132,23 @@ def create_app(settings: Settings | None = None, converter: LibreOfficeConverter
 
     @app.get("/", response_class=HTMLResponse)
     async def index(request: Request):
-        return templates.TemplateResponse(request=request, name="index.html")
+        return templates.TemplateResponse(request=request, name="index.html", context={"tools": DOCUMENT_TOOLS})
+
+    def render_tool(request: Request, operation: str):
+        return templates.TemplateResponse(request=request, name="document-tool.html",
+                                          context={"settings": settings, "operation": operation, "tool": DOCUMENT_TOOLS[operation]})
 
     @app.get("/word-to-pdf", response_class=HTMLResponse)
     async def word_to_pdf(request: Request):
-        return templates.TemplateResponse(request=request, name="word-to-pdf.html", context={"settings": settings})
+        return render_tool(request, "word-to-pdf")
+
+    @app.get("/merge-pdfs", response_class=HTMLResponse)
+    async def merge_pdfs_page(request: Request):
+        return render_tool(request, "merge-pdfs")
+
+    @app.get("/convert-and-merge", response_class=HTMLResponse)
+    async def convert_and_merge_page(request: Request):
+        return render_tool(request, "convert-and-merge")
 
     @app.get("/api/status")
     async def status(request: Request):

@@ -63,6 +63,9 @@ fieldset:disabled .drop-zone { opacity: .5; cursor: default; }
 .file-list { list-style: none; padding: 0; margin: 12px 0 0; }
 .file-list li { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding: 12px 0; }
 .file-description { display: flex; flex-direction: column; min-width: 0; }
+.file-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.order-button { color: var(--text); background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 4px 9px; min-height: 36px; }
+.order-button:hover:enabled { background: var(--hover); }
 .file-description small { color: var(--muted); }
 .file-list a { color: #aecdfc; }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
@@ -97,4 +100,6 @@ progress { width: 100%; height: 8px; accent-color: #b6cef5; }
   .drop-zone { padding: 22px 12px; }
   .site-footer::before { left: 20px; right: 20px; }
   .actions .button { width: 100%; }
+  .file-list li { flex-wrap: wrap; }
+  .file-actions { margin-left: auto; }
 }

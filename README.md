@@ -5,7 +5,7 @@ Projeto em desenvolvimento para aprendizado em Python, portfólio e futura dispo
 ## Estado atual
 
 - **Suíte modular local:** página inicial azul e Word para PDF com upload de DOCX, processamento em lote pelo LibreOffice, acompanhamento da tarefa e downloads individuais ou em ZIP.
-- **API de PDFs:** juntar PDFs e converter e juntar DOCX/PDFs já estão disponíveis no backend, com teste pela documentação interativa em `/docs`. As telas serão conectadas depois.
+- **Ferramentas de PDF:** juntar PDFs e converter e juntar DOCX/PDFs estão disponíveis pelos cartões da página inicial, com seleção, reordenação e download do PDF final.
 - **Conversor local funcional:** converte documentos com o Microsoft Word instalado no Windows e permite juntar os resultados.
 - **Prévia visual:** grade azul com as cinco ferramentas planejadas; ainda não está integrada ao processamento.
 - **Laboratório de conversão:** testa DOCX com LibreOffice, gera exemplos fictícios e registra os resultados para comparação com o Word.
@@ -27,7 +27,7 @@ Instale o [LibreOffice](https://www.libreoffice.org/download/) ou configure `LIB
 .\Start_Suite.bat
 ```
 
-O navegador abre em **http://127.0.0.1:8090**. Clique em **Word para PDF**, selecione DOCX e converta. Os outros quatro cartões indicam ferramentas planejadas. Mantenha o terminal aberto; Ctrl+C encerra a aplicação. Se a porta estiver ocupada, use `.\Start_Suite.bat --port 8091`.
+O navegador abre em **http://127.0.0.1:8090**. Escolha **Word para PDF**, **Juntar PDFs** ou **Converter e juntar**. Nas ferramentas de junção, selecione pelo menos dois arquivos e ajuste a ordem com os botões ↑ e ↓ antes de processar. Imagens para PDF e QR Code continuam planejados. Mantenha o terminal aberto; Ctrl+C encerra a aplicação. Se a porta estiver ocupada, use `.\Start_Suite.bat --port 8091`.
 
 Nesta versão local: até 10 documentos, 20 MB por arquivo e 50 MB por tarefa; uma conversão por vez, com até quatro tarefas entre envio, espera e processamento. Os PDFs ficam disponíveis por 30 minutos. Os limites são provisórios, definidos em `suite/settings.py`. O serviço público e sua implantação ainda não estão prontos.
 

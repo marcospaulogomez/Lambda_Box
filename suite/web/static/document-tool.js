@@ -6,11 +6,15 @@
   const list = find('file-list');
   const convertButton = find('convert-button');
   const errorMessage = find('error-message');
-  const storageKey = 'suite.wordToPdf.job';
+  const operation = root.dataset.operation;
+  const storageKey = operation === 'word-to-pdf' ? 'suite.wordToPdf.job' : `suite.${operation}.job`;
+  const extensions = input.accept.split(',');
+  const minFiles = Number(root.dataset.minFiles);
+  const canReorder = root.dataset.reorder === 'true';
   let files = [];
   let jobId = null;
   let locked = false;
-  let available = true;
+  let engineAvailable = true;
   let pollGeneration = 0;
   let expiryTimer = null;
   const maxFiles = Number(root.dataset.maxFiles);
@@ -38,7 +42,28 @@
   function setLocked(value) {
     locked = value;
     find('file-controls').disabled = value;
-    convertButton.disabled = value || !available || !files.length;
+    updateAvailability();
+  }
+
+  function updateAvailability() {
+    const needsEngine = operation === 'word-to-pdf' || files.some(file => file.name.toLowerCase().endsWith('.docx'));
+    const available = !needsEngine || engineAvailable;
+    convertButton.disabled = locked || !available || files.length < minFiles;
+    const warning = find('engine-message');
+    warning.hidden = available;
+    warning.textContent = available ? '' : 'O LibreOffice não foi encontrado para converter os arquivos Word. Confira a instalação e reinicie a suíte.';
+  }
+
+  function moveFile(index, direction) {
+    if (locked) return;
+    const target = index + direction;
+    if (target < 0 || target >= files.length) return;
+    [files[index], files[target]] = [files[target], files[index]];
+    renderSelection();
+    const row = list.children[target];
+    const buttons = Array.from(row.querySelectorAll('button'));
+    (buttons.find(button => button.dataset.direction === String(direction) && !button.disabled) || buttons.find(button => !button.disabled)).focus();
+    find('selection-summary').textContent = `Ordem atualizada: ${files[target].name} está na posição ${target + 1} de ${files.length}.`;
   }
 
   function renderSelection() {
@@ -48,7 +73,7 @@
       const description = document.createElement('span');
       description.className = 'file-description';
       const name = document.createElement('span');
-      name.textContent = file.name;
+      name.textContent = canReorder ? `${index + 1}. ${file.name}` : file.name;
       const size = document.createElement('small');
       size.textContent = formatSize(file.size);
       description.append(name, size);
@@ -62,20 +87,38 @@
         renderSelection();
         (list.querySelector('button') || input).focus();
       });
-      item.append(description, remove);
+      const actions = document.createElement('span');
+      actions.className = 'file-actions';
+      if (canReorder) {
+        for (const direction of [-1, 1]) {
+          const move = document.createElement('button');
+          move.type = 'button';
+          move.className = 'order-button';
+          move.dataset.direction = direction;
+          move.textContent = direction === -1 ? '↑' : '↓';
+          move.setAttribute('aria-label', `Mover ${file.name} para ${direction === -1 ? 'cima' : 'baixo'}`);
+          move.disabled = direction === -1 ? index === 0 : index === files.length - 1;
+          move.addEventListener('click', () => moveFile(index, direction));
+          actions.append(move);
+        }
+      }
+      actions.append(remove);
+      item.append(description, actions);
       list.append(item);
     });
     const total = files.reduce((sum, file) => sum + file.size, 0);
     find('selection-summary').textContent = files.length ? `${files.length} documento(s) · ${formatSize(total)}` : 'Nenhum documento selecionado.';
     find('clear-selection').hidden = !files.length;
-    convertButton.disabled = locked || !available || !files.length;
+    updateAvailability();
   }
 
   function addFiles(incoming) {
     if (locked) return;
     const combined = [...files, ...incoming];
     if (combined.length > maxFiles) return showError(`Selecione no máximo ${maxFiles} documentos.`);
-    if (incoming.some(file => !file.name.toLowerCase().endsWith('.docx'))) return showError('Envie somente documentos no formato .docx.');
+    if (incoming.some(file => !extensions.some(extension => file.name.toLowerCase().endsWith(extension)))) {
+      return showError(`Formatos aceitos nesta ferramenta: ${extensions.join(', ')}.`);
+    }
     if (incoming.some(file => !file.size)) return showError('Um dos documentos está vazio.');
     if (incoming.some(file => file.size > maxFileBytes) || combined.reduce((sum, file) => sum + file.size, 0) > maxTotalBytes) {
       return showError('Os arquivos excedem o limite de tamanho indicado.');
@@ -121,7 +164,8 @@
     find('job-progress').hidden = true;
     find('results').hidden = false;
     find('job-actions').hidden = false;
-    find('result-summary').textContent = `${job.files.length} PDF(s) · conversão em ${job.seconds.toLocaleString('pt-BR')} s. Download disponível até ${new Date(job.expires_at * 1000).toLocaleTimeString('pt-BR')}.`;
+    const pageCount = job.pages === null ? '' : ` · ${job.pages} página(s)`;
+    find('result-summary').textContent = `${job.files.length} PDF(s)${pageCount} · processamento em ${job.seconds.toLocaleString('pt-BR')} s. Download disponível até ${new Date(job.expires_at * 1000).toLocaleTimeString('pt-BR')}.`;
     const archive = find('download-archive');
     archive.hidden = !job.archive_url;
     if (job.archive_url) archive.href = job.archive_url;
@@ -142,7 +186,7 @@
     expiryTimer = setTimeout(() => {
       find('results').hidden = true;
       find('job-actions').hidden = true;
-      showError('O prazo para download terminou. Você pode iniciar uma nova conversão.');
+      showError('O prazo para download terminou. Você pode enviar os documentos novamente.');
       remember(null);
       jobId = null;
       setLocked(false);
@@ -166,7 +210,7 @@
           return;
         }
         find('job-progress').hidden = false;
-        find('progress-title').textContent = job.state === 'queued' ? 'Aguardando na fila' : 'Convertendo seus documentos';
+        find('progress-title').textContent = job.state === 'queued' ? 'Aguardando na fila' : root.dataset.progress;
         find('progress-message').textContent = job.state === 'queued' ? 'Sua tarefa começará assim que o processamento anterior terminar.' : 'O processamento pode levar alguns segundos. Você pode manter esta página aberta.';
       } catch (error) {
         if (generation !== pollGeneration) return;
@@ -181,17 +225,17 @@
 
   find('conversion-form').addEventListener('submit', async event => {
     event.preventDefault();
-    if (locked || !files.length) return;
+    if (locked || convertButton.disabled || files.length < minFiles) return;
     setLocked(true);
     showError('');
     find('job-progress').hidden = false;
     find('progress-title').textContent = 'Enviando documentos';
-    find('progress-message').textContent = 'Preparando os arquivos para a conversão.';
+    find('progress-message').textContent = 'Preparando os arquivos para o processamento.';
     find('progress-title').focus();
     const body = new FormData();
     files.forEach(file => body.append('files', file, file.name));
     try {
-      const job = await request('/api/jobs/word-to-pdf', { method: 'POST', body });
+      const job = await request(`/api/jobs/${operation}`, { method: 'POST', body });
       jobId = job.id;
       remember(jobId);
       await poll();
@@ -216,9 +260,8 @@
   });
 
   request('/api/status').then(status => {
-    available = status.conversion_available;
-    convertButton.disabled = locked || !available || !files.length;
-    if (!available) showError('O motor de conversão não foi encontrado. Confira a instalação do LibreOffice e reinicie a suíte.');
+    engineAvailable = status.conversion_available;
+    updateAvailability();
   }).catch(() => showError('Não foi possível consultar o servidor. Confira se o terminal da suíte está aberto.'));
 
   try { jobId = sessionStorage.getItem(storageKey); } catch {}

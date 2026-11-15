@@ -3,14 +3,14 @@
 {% block content %}
   <div class="intro"><h1>Ferramentas</h1><p>Para converter documentos, organizar PDFs e compartilhar informações.</p></div>
   <div class="tool-grid" aria-label="Ferramentas disponíveis e planejadas">
-    <a class="tool" href="/word-to-pdf" style="--tool-ink:#9fbff2">
-      <div class="tool-top">{{ icon('word') }}<span class="eyebrow">DOCUMENTOS</span></div>
-      <h2>Word para PDF</h2><p>Converta arquivos Word em PDFs individuais.</p>
-      <div class="tool-bottom"><span>WORD → PDF</span><span aria-hidden="true">↗</span></div>
+    {% for operation, tool in tools.items() %}
+    <a class="tool" href="/{{ operation }}" style="--tool-ink:{{ tool.color }}">
+      <div class="tool-top">{{ icon(tool.icon) }}<span class="eyebrow">{{ tool.category }}</span></div>
+      <h2>{{ tool.title }}</h2><p>{{ tool.card_description }}</p>
+      <div class="tool-bottom"><span>{{ tool.flow }}</span><span aria-hidden="true">↗</span></div>
     </a>
+    {% endfor %}
     {% for name, symbol, category, description, color in [
-      ('Juntar PDFs', 'merge', 'PDF', 'Una seus PDFs na ordem que escolher.', '#e9a48d'),
-      ('Converter e juntar', 'combine', 'DOCUMENTOS / PDF', 'Converta documentos Word e gere um único PDF.', '#e9a48d'),
       ('Imagens para PDF', 'image', 'IMAGENS', 'Transforme suas imagens em páginas de um PDF.', '#9ac8ad'),
       ('Gerar QR Code', 'qr', 'QR CODE', 'Gere um código para compartilhar links ou textos.', '#ebc77e')
     ] %}
