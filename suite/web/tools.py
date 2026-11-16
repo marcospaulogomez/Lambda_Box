@@ -5,7 +5,7 @@ DOCUMENT_TOOLS = {
         "title": "Word para PDF", "icon": "word", "category": "DOCUMENTOS", "color": "#9fbff2",
         "card_description": "Converta arquivos Word em PDFs individuais.", "flow": "WORD → PDF",
         "description": "Um PDF por documento, com download individual ou de todos em ZIP.",
-        "accept": ".docx", "formats": "DOCX", "min_files": 1, "reorder": False,
+        "accept": ".docx", "formats": "DOCX", "min_files": 1, "reorder": True,
         "action": "Converter para PDF", "progress": "Convertendo seus documentos", "result": "Seus PDFs estão prontos",
     },
     "merge-pdfs": {

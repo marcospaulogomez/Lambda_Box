@@ -24,6 +24,8 @@ Construir uma suíte com identidade própria, fácil de reconhecer e de usar. O 
 - Tipografia e alinhamento como elementos principais da composição.
 - Texto direto sobre a tarefa de cada ferramenta.
 - Estados de foco visíveis e navegação por teclado.
+- Nas ferramentas de arquivos, envio à esquerda e lista à direita em telas acima de 900 px. Em telas menores, os painéis ficam empilhados.
+- Andamento acima dos painéis. A lista de seleção tem rolagem própria e permite arrastar arquivos, com setas como alternativa por teclado.
 - Grade com cinco colunas a partir de 1.280 px, três abaixo desse limite, duas até 1.000 px e uma até 680 px.
 
 Os valores de tamanho são pontos de partida para avaliação visual. A definição final deve considerar textos longos, celulares e ampliação do navegador.
@@ -48,8 +50,7 @@ Cabeçalho, favicon, rodapé e título do aplicativo funcional já usam a nova m
 
 - Aproveitar melhor a largura e a altura da página para reduzir a rolagem.
 - Os cartões da página funcional já foram estreitados, com cinco ferramentas por linha em telas amplas. Continuar avaliando a legibilidade em futuras ferramentas.
-- Na tela de Word para PDF, avaliar o progresso no topo e a lista de arquivos ao lado da área de trabalho.
-- Validar essa composição também no celular, mantendo os estados e os controles acessíveis.
+- Progresso no topo e lista lateral já foram aplicados às quatro ferramentas de arquivos, com composição empilhada no celular.
 - Receber e integrar os ícones específicos que serão criados pelo autor.
 - Experimentar uma animação breve no ícone ao passar o mouse, como aumentar e retornar à escala original.
 - Definir também o comportamento com foco pelo teclado e respeitar a preferência por movimento reduzido.

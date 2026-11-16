@@ -26,6 +26,8 @@ O [FastAPI aceita uploads multipart](https://fastapi.tiangolo.com/tutorial/reque
 
 - Página inicial com a grade aprovada; Word para PDF, juntar PDFs, converter e juntar e imagens para PDF estão disponíveis. As ferramentas compartilham o template `document-tool.html` e o script `document-tool.js`, configurados em `suite/web/tools.py`.
 - Seleção pelo explorador ou por arrastar e soltar, remoção de itens e validação no navegador e no servidor.
+- Área de envio à esquerda e arquivos selecionados à direita em telas acima de 900 px; em telas menores, a lista fica abaixo. O andamento aparece no topo, e listas longas têm rolagem própria.
+- Reordenação por arraste nas quatro ferramentas de arquivos. Segure a linha com o mouse; no toque, use o símbolo de pontos. Os botões ↑ e ↓ continuam disponíveis pelo teclado. Escape cancela o arraste, e os controles são bloqueados durante a tarefa.
 - Uma inicialização do LibreOffice para todos os documentos de uma tarefa. Cada tarefa usa um perfil descartável próprio.
 - Estados `queued`, `processing`, `completed` e `failed`, consultados pelo navegador sem bloquear a página.
 - PDFs individuais e ZIP para lotes com mais de um documento. Os nomes recebem prefixos numéricos, preservando a ordem mesmo com nomes iguais.
@@ -62,7 +64,7 @@ O serviço escuta somente em `127.0.0.1`; os hosts e as origens aceitos também 
 
 1. Execute `.\Start_Suite.bat` na raiz e acesse a página aberta em `http://127.0.0.1:8090`.
 2. Entre em **Word para PDF** e selecione os cinco DOCX de `laboratory/input-v2/`.
-3. Confira nomes e tamanhos, remova e adicione um documento novamente.
+3. Confira nomes e tamanhos na lista lateral. Arraste um documento para cima ou para baixo; uma linha indica a posição de destino. Teste também Tab e Enter nos botões ↑/↓, remova um item e adicione-o novamente. No Word para PDF, a ordem controla os resultados individuais e o ZIP; nas ferramentas de junção e imagens, controla as páginas do PDF final.
 4. Clique em **Converter para PDF** e acompanhe os estados de fila e processamento.
 5. Baixe os PDFs e o ZIP. Confira a paginação esperada: 1, 1, 1, 1 e 2 páginas. Compare a aparência com os mesmos DOCX no Word.
 6. Atualize a aba e confira a recuperação dos resultados. Use **Excluir arquivos desta tarefa** e confirme que os links deixam de funcionar.

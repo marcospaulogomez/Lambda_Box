@@ -62,7 +62,7 @@ class SiteWebTests(unittest.TestCase):
             with self.subTest(path=path):
                 response = client.get(path)
                 self.assertEqual(response.status_code, 200)
-                self.assertIn("· Lambda Box</title>", response.text)
+                self.assertIn("<title>Lambda Box</title>" if path == "/" else "· Lambda Box</title>", response.text)
                 self.assertIn('href="/contact"', response.text)
                 self.assertIn('href="/support"', response.text)
                 self.assertIn("branding/favicon.svg", response.text)

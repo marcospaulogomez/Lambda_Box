@@ -5,12 +5,14 @@ A suíte agora se chama **Lambda Box**, uma criação da **Lambda Tecnologia**. 
 ## Interface
 
 - Logo da Lambda Box no cabeçalho e símbolo próprio na aba do navegador.
+- A aba inicial exibe apenas **Lambda Box**. As páginas internas identificam a ferramenta ou seção e a marca. A frase final do rodapé é **Feito para a comunidade.**
 - Logo da Lambda Tecnologia no rodapé e na página de contato.
 - Tema azul escuro preservado, com detalhes verdes da marca.
 - Cinco cartões por linha a partir de 1.280 px; três abaixo disso, dois até 1.000 px e um até 680 px. Fontes e ícones continuam grandes, com menos largura por cartão.
 - Menu e rodapé levam a `/contact` (**Crie seu sistema**) e `/support` (**Apoie o projeto**).
 - Contato abre o canal escolhido pelo visitante; não há formulário coletando dados no servidor.
 - Doação voluntária fica em uma página própria, sem interromper o uso das ferramentas.
+- Nas ferramentas de arquivos, seleção à direita e envio à esquerda em telas acima de 900 px, com andamento no topo. Em telas menores, os painéis ficam empilhados. A lista permite arrastar para reordenar e mantém controles por teclado.
 
 Os PNGs originais estão em `assets/branding/`. `scripts/prepare_branding.py` prepara os SVGs usados pela interface: eles incorporam os PNGs originais e enquadram as áreas visíveis. Isso remove o espaço transparente da apresentação sem redesenhar nem alterar os pixels das marcas. São contêineres SVG com imagem raster incorporada, não versões vetorizadas das logos.
 

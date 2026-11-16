@@ -1,27 +1,10 @@
 {% extends "base.html" %}
-{% block title %}{{ tool.title }}{% endblock %}
+{% block title %}{{ tool.title }} · Lambda Box{% endblock %}
 {% block scripts %}<script src="{{ url_for('static', path='/document-tool.js') }}" defer></script>{% endblock %}
 {% block content %}
   <a class="back-link" href="/">← Todas as ferramentas</a>
   <div class="intro tool-intro"><h1>{{ tool.title }}</h1><p>{{ tool.description }}</p></div>
   <section class="workspace" id="converter" data-operation="{{ operation }}" data-min-files="{{ tool.min_files }}" data-reorder="{{ 'true' if tool.reorder else 'false' }}" data-progress="{{ tool.progress }}" data-max-files="{{ settings.max_files }}" data-max-file-bytes="{{ settings.max_file_bytes }}" data-max-total-bytes="{{ settings.max_total_bytes }}">
-    <form id="conversion-form" novalidate>
-      <fieldset id="file-controls">
-        <legend class="sr-only">Selecionar arquivos</legend>
-        <label class="drop-zone" id="drop-zone" for="file-input">
-          <span class="drop-symbol" aria-hidden="true">↑</span>
-          <span class="drop-title">{{ tool.get('selection_title', 'Escolha seus documentos') }}</span>
-          <span class="muted">Clique para selecionar ou arraste os arquivos para cá.</span>
-          <input id="file-input" type="file" name="files" accept="{{ tool.accept }}" multiple aria-describedby="file-limits">
-        </label>
-        <p class="file-limits" id="file-limits">{{ tool.formats }} · {{ tool.min_files }} a {{ settings.max_files }} arquivos · {{ settings.max_file_bytes // (1024 * 1024) }} MB por arquivo · {{ settings.max_total_bytes // (1024 * 1024) }} MB no total{% if operation == 'images-to-pdf' %} · {{ settings.max_image_pixels // 1000000 }} MP por imagem · {{ settings.max_total_image_pixels // 1000000 }} MP no total{% elif tool.reorder %} · até {{ settings.max_pdf_pages }} páginas no resultado{% endif %}</p>
-        {% if tool.get('hint') %}<p class="file-limits">{{ tool.hint }}</p>{% endif %}
-        {% if tool.reorder %}<p class="file-limits" id="order-hint">A ordem abaixo será a ordem do PDF final. Use ↑ e ↓ para mover os arquivos.</p>{% endif %}
-        <div class="selection-heading"><p id="selection-summary" role="status">Nenhum documento selecionado.</p><button type="button" class="text-button" id="clear-selection" hidden>Limpar seleção</button></div>
-        <ul id="file-list" class="file-list" aria-label="Arquivos selecionados"></ul>
-      </fieldset>
-      <div class="actions"><button class="button primary" id="convert-button" type="submit" disabled>{{ tool.action }}</button><span class="muted">Os originais permanecem intactos.</span></div>
-    </form>
     <p class="notice error" id="error-message" role="alert" hidden></p>
     <p class="notice error" id="engine-message" role="status" hidden></p>
     <section id="job-progress" class="job-progress" hidden aria-labelledby="progress-title">
@@ -30,6 +13,31 @@
       <progress aria-label="Processamento em andamento"></progress>
       <button class="button" id="retry-status" type="button" hidden>Consultar andamento novamente</button>
     </section>
+    <form id="conversion-form" novalidate>
+      <fieldset id="file-controls">
+        <legend class="sr-only">Selecionar e organizar arquivos</legend>
+        <div class="document-columns">
+          <div class="upload-panel">
+            <label class="drop-zone" id="drop-zone" for="file-input">
+              <span class="drop-symbol" aria-hidden="true">↑</span>
+              <span class="drop-title">{{ tool.get('selection_title', 'Escolha seus documentos') }}</span>
+              <span class="muted">Clique para selecionar ou arraste os arquivos para cá.</span>
+              <input id="file-input" type="file" name="files" accept="{{ tool.accept }}" multiple aria-describedby="file-limits">
+            </label>
+            <p class="file-limits" id="file-limits">{{ tool.formats }} · {{ tool.min_files }} a {{ settings.max_files }} arquivos · {{ settings.max_file_bytes // (1024 * 1024) }} MB por arquivo · {{ settings.max_total_bytes // (1024 * 1024) }} MB no total{% if operation == 'images-to-pdf' %} · {{ settings.max_image_pixels // 1000000 }} MP por imagem · {{ settings.max_total_image_pixels // 1000000 }} MP no total{% elif operation in ['merge-pdfs', 'convert-and-merge'] %} · até {{ settings.max_pdf_pages }} páginas no resultado{% endif %}</p>
+            {% if tool.get('hint') %}<p class="file-limits">{{ tool.hint }}</p>{% endif %}
+            <div class="actions"><button class="button primary" id="convert-button" type="submit" disabled>{{ tool.action }}</button><span class="muted">Os originais permanecem intactos.</span></div>
+          </div>
+          <section class="selection-panel" aria-labelledby="selection-title">
+            <h2 id="selection-title">Arquivos selecionados</h2>
+            {% if tool.reorder %}<p class="file-limits" id="order-hint">{{ 'A ordem define a sequência dos PDFs no resultado.' if operation == 'word-to-pdf' else 'A ordem será a mesma no PDF final.' }} Arraste os arquivos para cima ou para baixo. Você também pode usar os botões ↑ e ↓.</p>{% endif %}
+            <div class="selection-heading"><p id="selection-summary" role="status">Nenhum documento selecionado.</p><button type="button" class="text-button" id="clear-selection" hidden>Limpar seleção</button></div>
+            <p class="selection-empty muted" id="empty-selection">Adicione arquivos pela área de envio. Eles aparecerão aqui.</p>
+            <ul id="file-list" class="file-list selected-files" aria-label="Arquivos selecionados"{% if tool.reorder %} aria-describedby="order-hint"{% endif %}></ul>
+          </section>
+        </div>
+      </fieldset>
+    </form>
     <section id="results" class="results" hidden aria-labelledby="results-title">
       <h2 id="results-title" tabindex="-1">{{ tool.result }}</h2>
       <p id="result-summary" class="muted"></p>
