@@ -3,7 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Ferramentas{% endblock %} · Suíte</title>
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Lambda Box: ferramentas para converter documentos, juntar PDFs, organizar imagens e gerar QR Codes.">
+  <title>{% block title %}Ferramentas{% endblock %} · Lambda Box</title>
+  {% if favicon_available %}<link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='/branding/favicon.svg') }}">{% endif %}
   <link rel="stylesheet" href="{{ url_for('static', path='/suite.css') }}">
   {% block scripts %}{% endblock %}
 </head>
@@ -11,14 +14,38 @@
   <a class="skip-link" href="#main">Ir para o conteúdo</a>
   <header class="site-header">
     <div class="wrap header-inner">
-      <a class="brand" href="/">Suíte</a>
-      <nav aria-label="Principal"><a href="/">Ferramentas</a></nav>
+      <a class="brand" href="/" aria-label="Lambda Box — início">
+        {% if box_logo_available %}<img src="{{ url_for('static', path='/branding/lambda-box-logo.svg') }}" alt="Lambda Box" width="186" height="74">{% else %}<span class="brand-symbol" aria-hidden="true">λ</span><span>Lambda Box</span>{% endif %}
+      </a>
+      <nav class="main-nav" aria-label="Principal">
+        <a href="/" {% if request.url.path == '/' %}aria-current="page"{% endif %}>Ferramentas</a>
+        <a href="/contact" {% if request.url.path == '/contact' %}aria-current="page"{% endif %}>Crie seu sistema</a>
+        <a class="support-link" href="/support" {% if request.url.path == '/support' %}aria-current="page"{% endif %}>Apoie o projeto <span aria-hidden="true">↗</span></a>
+      </nav>
     </div>
   </header>
   <main class="wrap" id="main">{% block content %}{% endblock %}</main>
-  <footer class="wrap site-footer">
-    <p>Documentos · Imagens · QR Code</p>
-    <details><summary>Sobre o projeto</summary><p>Uma suíte em desenvolvimento para facilitar tarefas com arquivos. Aprendizado em Python, código aberto e a proposta de um serviço para a comunidade.</p></details>
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div class="footer-about">
+        <p class="footer-kicker">UMA CRIAÇÃO</p>
+        {% if company_logo_available %}<a class="company-brand" href="/contact"><img src="{{ url_for('static', path='/branding/lambda-technology-logo.svg') }}" alt="Lambda Tecnologia" width="246" height="62" loading="lazy"></a>{% else %}<a class="company-name" href="/contact">Lambda Tecnologia</a>{% endif %}
+        <p>Ferramentas úteis, feitas para simplificar o dia a dia.</p>
+        {% if site.repository_url %}<a class="footer-link" href="{{ site.repository_url }}" target="_blank" rel="noopener noreferrer">Conheça o código no GitHub <span aria-hidden="true">↗</span></a>{% endif %}
+      </div>
+      <div>
+        <h2>Uma ideia para o seu negócio?</h2>
+        <p>Vamos transformar sua necessidade em um sistema feito para você.</p>
+        <a class="footer-link" href="/contact">Converse com a Lambda Tecnologia <span aria-hidden="true">↗</span></a>
+        {% if site.email %}<a class="footer-email" href="{{ site.email_url }}">{{ site.email }}</a>{% endif %}
+      </div>
+      <div class="footer-support">
+        <h2>Doe para este projeto</h2>
+        <p>A Lambda Box é gratuita. Uma contribuição voluntária ajuda o projeto a continuar crescendo.</p>
+        <a class="footer-link" href="/support">Quero apoiar <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <div class="wrap footer-bottom"><p>Lambda Box · Documentos, imagens e QR Code.</p><p>Feito em Python, para a comunidade.</p></div>
   </footer>
 </body>
 </html>

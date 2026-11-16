@@ -15,8 +15,10 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from suite.conversion import LibreOfficeConverter
 from suite.services.documents import DocumentService, ServiceError
 from suite.settings import Settings
+from suite.site import SiteSettings
 from suite.web.tools import DOCUMENT_TOOLS
 from suite.web.qr_routes import qr_router
+from suite.web.site_routes import site_router
 
 
 WEB_ROOT = Path(__file__).resolve().parent
@@ -98,8 +100,10 @@ class JobFileResponse(Response):
                                headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})(scope, receive, send)
 
 
-def create_app(settings: Settings | None = None, converter: LibreOfficeConverter | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, converter: LibreOfficeConverter | None = None,
+               site_settings: SiteSettings | None = None) -> FastAPI:
     settings = settings or Settings.local()
+    site_settings = site_settings if site_settings is not None else SiteSettings.local()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -121,13 +125,19 @@ def create_app(settings: Settings | None = None, converter: LibreOfficeConverter
                 await cleaner
             await run_in_threadpool(service.close)
 
-    app = FastAPI(title="Document Suite", lifespan=lifespan)
+    app = FastAPI(title="Lambda Box", lifespan=lifespan)
     app.add_middleware(UploadLimitMiddleware, max_bytes=settings.max_total_bytes + 1024 * 1024)
     app.add_middleware(SameOriginMiddleware)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
     app.mount("/static", StaticFiles(directory=WEB_ROOT / "static"), name="static")
-    templates = Jinja2Templates(directory=WEB_ROOT / "templates")
+    templates = Jinja2Templates(directory=WEB_ROOT / "templates", context_processors=[
+        lambda request: {"site": site_settings,
+                         "box_logo_available": (WEB_ROOT / "static/branding/lambda-box-logo.svg").is_file(),
+                         "company_logo_available": (WEB_ROOT / "static/branding/lambda-technology-logo.svg").is_file(),
+                         "favicon_available": (WEB_ROOT / "static/branding/favicon.svg").is_file()},
+    ])
     app.include_router(qr_router(templates))
+    app.include_router(site_router(templates, site_settings))
 
     @app.exception_handler(ServiceError)
     async def service_error(request: Request, exc: ServiceError):

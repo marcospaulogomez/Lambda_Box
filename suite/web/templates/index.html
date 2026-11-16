@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% from "icons.html" import icon %}
 {% block content %}
-  <div class="intro"><h1>Ferramentas</h1><p>Para converter documentos, organizar PDFs e compartilhar informações.</p></div>
-  <div class="tool-grid" aria-label="Ferramentas disponíveis e planejadas">
+  <div class="intro"><div><p class="page-kicker">DOCUMENTOS · IMAGENS · QR CODE</p><h1>Todas as ferramentas</h1></div><p>Para converter documentos, organizar PDFs e compartilhar informações.</p></div>
+  <div class="tool-grid" aria-label="Ferramentas disponíveis">
     {% for operation, tool in tools.items() %}
     <a class="tool" href="/{{ operation }}" style="--tool-ink:{{ tool.color }}">
       <div class="tool-top">{{ icon(tool.icon) }}<span class="eyebrow">{{ tool.category }}</span></div>

@@ -2,7 +2,7 @@
 
 ## Prioridade e estado atual
 
-A prioridade é construir o software. Nome, logo, favicon, ícones próprios e animações serão retomados depois. A aparência azul aprovada é a base provisória da interface.
+As cinco ferramentas locais estão implementadas. O projeto agora se chama **Lambda Box**, com logos da suíte e da **Lambda Tecnologia**, favicon, cartões mais estreitos, contato e apoio voluntário. A aparência azul aprovada foi preservada. Ícones próprios, animações e o redesenho interno das telas continuam para uma etapa posterior.
 
 MVP significa primeira versão utilizável: um conjunto limitado de ferramentas com resultados verificáveis e um fluxo completo de entrada, processamento e download.
 

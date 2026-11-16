@@ -1,6 +1,6 @@
-# Suíte de ferramentas (converter e juntar arquivos, gerar qr code)
+# Lambda Box
 
-Projeto em desenvolvimento para aprendizado em Python, portfólio e futura disponibilização à comunidade. O nome e a marca serão definidos posteriormente.
+Suíte da Lambda Tecnologia para converter documentos, organizar PDFs, transformar imagens e gerar QR Codes. Projeto em desenvolvimento para aprendizado em Python, portfólio e futura disponibilização à comunidade.
 
 ## Estado atual
 
@@ -8,6 +8,7 @@ Projeto em desenvolvimento para aprendizado em Python, portfólio e futura dispo
 - **Ferramentas de PDF:** juntar PDFs e converter e juntar DOCX/PDFs estão disponíveis pelos cartões da página inicial, com seleção, reordenação e download do PDF final.
 - **Imagens para PDF:** JPG, JPEG e PNG, uma imagem por página A4, com ordem ajustável, orientação automática e transparências sobre fundo branco. Funciona sem Word ou LibreOffice.
 - **QR Code:** links ou texto em PNG, com legenda opcional, prévia e download; funciona sem Word ou LibreOffice.
+- **Identidade e comunidade:** logos e favicon próprios, cartões mais estreitos, página de contato e doações voluntárias via QR Pix, chave e Copia e Cola. Contatos e dados de doação ficam no `.env`, ignorado pelo Git.
 - **Conversor local funcional:** converte documentos com o Microsoft Word instalado no Windows e permite juntar os resultados.
 - **Prévia visual:** grade azul com as cinco ferramentas planejadas; ainda não está integrada ao processamento.
 - **Laboratório de conversão:** testa DOCX com LibreOffice, gera exemplos fictícios e registra os resultados para comparação com o Word.
@@ -38,6 +39,18 @@ Consulte [a base modular e seu roteiro de teste](docs/modular-foundation.md) par
 O [guia de imagens para PDF](docs/images-to-pdf.md) explica formatos, orientação, margens, limites de pixels e o teste reproduzível. Ao atualizar uma cópia existente, instale as dependências de `requirements.txt` e reinicie o servidor.
 
 O [guia de QR Code](docs/qr-code.md) explica o reaproveitamento do gerador desktop, o limite de texto, a legenda e como testar a leitura do PNG.
+
+## Marca, contatos e apoio ao projeto
+
+As páginas **Crie seu sistema** e **Apoie o projeto** estão no menu e no rodapé. Consulte [o guia de marca e contatos](docs/branding-and-contact.md) para atualizar as logos, configurar canais públicos e validar o QR Pix.
+
+Em uma cópia nova, copie o modelo e preencha apenas os canais que deseja publicar:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+O `.env.example` contém campos vazios; o `.env` local não deve ser incluído no Git. As informações selecionadas para contato e doação são públicas na página. Alterações exigem reiniciar o servidor. A versão local já foi configurada; não sobrescreva seu `.env` preenchido.
 
 ## Abrir o conversor atual
 

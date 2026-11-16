@@ -10,7 +10,7 @@ import uvicorn
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Iniciar a suíte local de documentos.")
+    parser = argparse.ArgumentParser(description="Iniciar a Lambda Box localmente.")
     parser.add_argument("--no-browser", action="store_true", help="Não abre o navegador automaticamente.")
     parser.add_argument("--port", type=int, default=8090, help="Porta local (padrão: 8090).")
     args = parser.parse_args()
@@ -25,7 +25,7 @@ def main() -> None:
             parser.exit(1, f"A porta {args.port} está em uso. Feche a suíte anterior ou informe --port 8091.\n")
         listener.listen(128)
         url = f"http://127.0.0.1:{listener.getsockname()[1]}"
-        print(f"Suíte disponível em {url}\nMantenha este terminal aberto. Ctrl+C encerra a aplicação.", flush=True)
+        print(f"Lambda Box disponível em {url}\nMantenha este terminal aberto. Ctrl+C encerra a aplicação.", flush=True)
         if not args.no_browser:
             threading.Timer(1, webbrowser.open, args=(url,)).start()
         server = uvicorn.Server(uvicorn.Config("suite.web.application:create_app", factory=True, log_level="info"))

@@ -1,6 +1,6 @@
 # Direção visual da suíte
 
-Este documento registra a proposta em avaliação. O nome e a marca ainda serão definidos pelo autor do projeto. A identidade visual está adiada: a prioridade atual é construir e validar as ferramentas.
+Este documento registra a direção visual da **Lambda Box**, criada pela **Lambda Tecnologia**. Após concluir os cinco fluxos locais, o autor retomou a identidade visual e forneceu as logos e o símbolo para a aba do navegador. Consulte [marca, contatos e doações](branding-and-contact.md) para configuração e testes.
 
 ## Objetivo
 
@@ -17,20 +17,20 @@ Construir uma suíte com identidade própria, fácil de reconhecer e de usar. O 
 ## Proposta em avaliação
 
 - Fundo azul profundo e cartões com contraste moderado.
-- Cartões compactos, com altura mínima de 264 px e cantos de 5 px. O conteúdo pode aumentar a altura quando necessário; o formato quadrado não é obrigatório.
+- Cartões compactos, com altura mínima de 248 px e cantos de 5 px. O conteúdo pode aumentar a altura quando necessário; o formato quadrado não é obrigatório.
 - Ícones de 52 px, títulos de 26 px e descrições de 15 px na configuração inicial.
 - IBM Plex Sans para textos e títulos; IBM Plex Mono para indicações curtas de formato. A prévia carrega essas fontes pela internet e possui fontes alternativas do sistema.
 - Ícones de uma única família, com espessura e tamanho consistentes. Cores discretas identificam documentos, PDFs, imagens e QR Code.
 - Tipografia e alinhamento como elementos principais da composição.
 - Texto direto sobre a tarefa de cada ferramenta.
 - Estados de foco visíveis e navegação por teclado.
-- Grade com três colunas em telas amplas, duas em telas intermediárias e uma em celulares.
+- Grade com cinco colunas a partir de 1.280 px, três abaixo desse limite, duas até 1.000 px e uma até 680 px.
 
 Os valores de tamanho são pontos de partida para avaliação visual. A definição final deve considerar textos longos, celulares e ampliação do navegador.
 
 ## Nome, logo e favicon
 
-Etapa adiada pelo autor. A marca provisória permite continuar o desenvolvimento funcional.
+Nome oficial: **Lambda Box**. A logo principal aparece no cabeçalho, o símbolo é usado no favicon e a marca **Lambda Tecnologia** identifica o autor no rodapé e na página de contato. Os arquivos fornecidos foram preservados em `assets/branding/`.
 
 O favicon é o ícone exibido na aba do navegador. Convém derivá-lo de um símbolo simples da marca, legível em 16 × 16 e 32 × 32 px.
 
@@ -42,12 +42,12 @@ Ao desenvolver a marca fora do projeto, preparar:
 4. Variações para fundos claros e escuros.
 5. Cores de referência e nomes das fontes utilizadas, com suas condições de uso.
 
-Após escolher a marca, integrar o cabeçalho, o favicon, os ícones de instalação quando aplicáveis e a apresentação do repositório. A palavra “Suíte” é apenas um identificador provisório da prévia.
+Cabeçalho, favicon, rodapé e título do aplicativo funcional já usam a nova marca. A prévia histórica em `outputs/` continua com a identidade provisória. Ícones de instalação e novos formatos de marca podem ser avaliados depois.
 
 ## Melhorias visuais registradas para depois
 
 - Aproveitar melhor a largura e a altura da página para reduzir a rolagem.
-- Reduzir a largura e a altura dos cartões da grade, hoje considerados grandes pelo autor, preservando a legibilidade dos textos e ícones. Avaliar mais cartões por linha em telas amplas.
+- Os cartões da página funcional já foram estreitados, com cinco ferramentas por linha em telas amplas. Continuar avaliando a legibilidade em futuras ferramentas.
 - Na tela de Word para PDF, avaliar o progresso no topo e a lista de arquivos ao lado da área de trabalho.
 - Validar essa composição também no celular, mantendo os estados e os controles acessíveis.
 - Receber e integrar os ícones específicos que serão criados pelo autor.

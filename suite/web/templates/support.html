@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Apoie o projeto{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='/support.js') }}" defer></script>{% endblock %}
+{% block content %}
+  <a class="back-link" href="/">← Voltar às ferramentas</a>
+  <div class="intro tool-intro"><div><p class="page-kicker">CONSTRUÍDO COM A COMUNIDADE</p><h1>Ajude a manter a caixa aberta.</h1></div><p>Se a Lambda Box facilitou o seu dia, você pode ajudar o projeto a crescer.</p></div>
+  <div class="info-grid">
+    <section class="workspace info-main" aria-labelledby="donation-title">
+      <h2 id="donation-title">Doe para este projeto</h2>
+      <p>A contribuição é voluntária. Você escolhe se quer ajudar e o valor que faz sentido para você.</p>
+      {% if site.pix_key %}
+        <div class="pix-panel">
+          {% if site.pix_payload %}
+          <div class="pix-instructions">
+            <img class="pix-qr" src="/support/pix.png" alt="QR Code Pix para doação voluntária à Lambda Box" width="240" height="240">
+            <div><h3>Escaneie com o app do seu banco.</h3><p>Escolha o valor e confira o beneficiário antes de confirmar. Obrigado por apoiar a Lambda Box.</p></div>
+          </div>
+          {% endif %}
+          <label class="field-label" for="pix-key">Chave Pix</label>
+          <div class="copy-field"><input class="text-input" id="pix-key" type="text" value="{{ site.pix_key }}" readonly spellcheck="false" autocomplete="off"><button class="button primary" type="button" data-copy-target="pix-key" data-copy-message="Chave Pix copiada.">Copiar chave Pix</button></div>
+          {% if site.pix_recipient_name %}<p class="file-limits">Beneficiário: <strong>{{ site.pix_recipient_name }}</strong>{% if site.pix_recipient_city %} · {{ site.pix_recipient_city }}{% endif %}</p>{% endif %}
+          {% if site.pix_bank_name %}<p class="file-limits">Instituição: {{ site.pix_bank_name }}</p>{% endif %}
+          {% if site.pix_payload %}
+          <details class="pix-payload"><summary>Prefere Pix Copia e Cola?</summary><label class="sr-only" for="pix-payload">Código Pix Copia e Cola</label><textarea id="pix-payload" rows="3" readonly spellcheck="false">{{ site.pix_payload }}</textarea><button class="button" type="button" data-copy-target="pix-payload" data-copy-message="Código Pix Copia e Cola copiado.">Copiar código Pix</button></details>
+          {% endif %}
+          <p id="copy-status" role="status" aria-live="polite"></p>
+        </div>
+      {% endif %}
+      {% if site.donation_url %}<a class="button primary donation-button" href="{{ site.donation_url }}" target="_blank" rel="noopener noreferrer">{{ 'Outra forma de contribuir' if site.pix_key else 'Fazer uma doação' }} <span aria-hidden="true">↗</span></a>{% endif %}
+      {% if not site.pix_key and not site.donation_url %}<p class="muted">As formas de doação serão disponibilizadas em breve. Enquanto isso, compartilhar a Lambda Box já ajuda muito.</p>{% endif %}
+      <p class="retention-note">Todas as ferramentas continuam disponíveis para quem contribui e para quem não contribui.</p>
+    </section>
+    <aside class="workspace info-aside" aria-labelledby="other-support-title">
+      <h2 id="other-support-title">Apoiar também é compartilhar.</h2>
+      <p>Indique a Lambda Box a alguém que precise, teste as ferramentas e conte o que pode melhorar.</p>
+      {% if site.repository_url %}<a class="footer-link" href="{{ site.repository_url }}" target="_blank" rel="noopener noreferrer">Acompanhe no GitHub <span aria-hidden="true">↗</span></a>{% endif %}
+      <a class="footer-link" href="/contact">Fale com a Lambda Tecnologia <span aria-hidden="true">↗</span></a>
+    </aside>
+  </div>
+{% endblock %}

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 
+from dotenv import dotenv_values
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -24,5 +26,5 @@ class Settings:
     @classmethod
     def local(cls) -> "Settings":
         extracted = PROJECT_ROOT / "laboratory" / "engine" / "program" / "soffice.com"
-        configured = os.environ.get("LIBREOFFICE_PATH")
+        configured = os.environ.get("LIBREOFFICE_PATH", dotenv_values(PROJECT_ROOT / ".env", interpolate=False).get("LIBREOFFICE_PATH"))
         return cls(libreoffice_path=configured or (extracted if extracted.is_file() else None))
