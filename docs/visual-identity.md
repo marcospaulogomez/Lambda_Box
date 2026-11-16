@@ -24,6 +24,8 @@ Construir uma suíte com identidade própria, fácil de reconhecer e de usar. O 
 - Tipografia e alinhamento como elementos principais da composição.
 - Texto direto sobre a tarefa de cada ferramenta.
 - Estados de foco visíveis e navegação por teclado.
+- O botão **Apoie o projeto** tem fundo verde da marca e texto escuro, inclusive quando a página de apoio está selecionada.
+- Os ícones das ferramentas fazem um movimento breve de subida, aumento e inclinação ao passar o mouse ou receber foco pelo teclado. A animação termina em 420 ms, sem repetição contínua, e é desativada quando o visitante prefere movimento reduzido.
 - Nas ferramentas de arquivos, envio à esquerda e lista à direita em telas acima de 900 px. Em telas menores, os painéis ficam empilhados.
 - Andamento acima dos painéis. A lista de seleção tem rolagem própria e permite arrastar arquivos, com setas como alternativa por teclado.
 - Grade com cinco colunas a partir de 1.280 px, três abaixo desse limite, duas até 1.000 px e uma até 680 px.
@@ -52,11 +54,7 @@ Cabeçalho, favicon, rodapé e título do aplicativo funcional já usam a nova m
 - Os cartões da página funcional já foram estreitados, com cinco ferramentas por linha em telas amplas. Continuar avaliando a legibilidade em futuras ferramentas.
 - Progresso no topo e lista lateral já foram aplicados às quatro ferramentas de arquivos, com composição empilhada no celular.
 - Receber e integrar os ícones específicos que serão criados pelo autor.
-- Experimentar uma animação breve no ícone ao passar o mouse, como aumentar e retornar à escala original.
-- Definir também o comportamento com foco pelo teclado e respeitar a preferência por movimento reduzido.
-- Avaliar transições de CSS para a animação; usar JavaScript quando a interação precisar de estado ou coordenação adicional.
-
-Essas animações ainda não foram implementadas. Os tamanhos das fontes aprovados devem ser preservados durante os ajustes de espaçamento.
+As animações atuais são feitas em CSS, sem dependência adicional de JavaScript. Os tamanhos das fontes aprovados devem ser preservados durante os ajustes de espaçamento.
 
 ## Como avaliar a prévia
 
