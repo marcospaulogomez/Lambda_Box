@@ -16,6 +16,7 @@ from suite.conversion import LibreOfficeConverter
 from suite.services.documents import DocumentService, ServiceError
 from suite.settings import Settings
 from suite.web.tools import DOCUMENT_TOOLS
+from suite.web.qr_routes import qr_router
 
 
 WEB_ROOT = Path(__file__).resolve().parent
@@ -53,13 +54,14 @@ class UploadLimitMiddleware:
         if scope["type"] != "http" or scope["method"] != "POST":
             return await self.app(scope, receive, send)
         headers = dict(scope["headers"])
+        max_bytes = min(self.max_bytes, 16 * 1024) if scope["path"] == "/api/qr-code" else self.max_bytes
         try:
             declared = int(headers.get(b"content-length", b"0"))
             if declared < 0:
                 raise ValueError
         except ValueError:
             return await JSONResponse({"detail": "Tamanho da requisição inválido."}, 400)(scope, receive, send)
-        if declared > self.max_bytes:
+        if declared > max_bytes:
             return await self.reject(scope, receive, send)
         received = 0
 
@@ -67,7 +69,7 @@ class UploadLimitMiddleware:
             nonlocal received
             message = await receive()
             received += len(message.get("body", b""))
-            if received > self.max_bytes:
+            if received > max_bytes:
                 raise BodyTooLarge
             return message
 
@@ -125,6 +127,7 @@ def create_app(settings: Settings | None = None, converter: LibreOfficeConverter
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
     app.mount("/static", StaticFiles(directory=WEB_ROOT / "static"), name="static")
     templates = Jinja2Templates(directory=WEB_ROOT / "templates")
+    app.include_router(qr_router(templates))
 
     @app.exception_handler(ServiceError)
     async def service_error(request: Request, exc: ServiceError):

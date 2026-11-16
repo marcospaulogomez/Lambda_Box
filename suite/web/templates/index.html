@@ -10,13 +10,10 @@
       <div class="tool-bottom"><span>{{ tool.flow }}</span><span aria-hidden="true">↗</span></div>
     </a>
     {% endfor %}
-    {% for name, symbol, category, description, color in [
-      ('Gerar QR Code', 'qr', 'QR CODE', 'Gere um código para compartilhar links ou textos.', '#ebc77e')
-    ] %}
-    <article class="tool planned" style="--tool-ink:{{ color }}">
-      <div class="tool-top">{{ icon(symbol) }}<span class="eyebrow">{{ category }}</span></div>
-      <h2>{{ name }}</h2><p>{{ description }}</p><div class="tool-bottom"><span>EM BREVE</span></div>
-    </article>
-    {% endfor %}
+    <a class="tool" href="/qr-code" style="--tool-ink:#ebc77e">
+      <div class="tool-top">{{ icon('qr') }}<span class="eyebrow">QR CODE</span></div>
+      <h2>Gerar QR Code</h2><p>Compartilhe links ou textos, com legenda opcional.</p>
+      <div class="tool-bottom"><span>TEXTO → PNG</span><span aria-hidden="true">↗</span></div>
+    </a>
   </div>
 {% endblock %}

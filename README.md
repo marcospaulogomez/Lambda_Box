@@ -7,6 +7,7 @@ Projeto em desenvolvimento para aprendizado em Python, portfólio e futura dispo
 - **Suíte modular local:** página inicial azul e Word para PDF com upload de DOCX, processamento em lote pelo LibreOffice, acompanhamento da tarefa e downloads individuais ou em ZIP.
 - **Ferramentas de PDF:** juntar PDFs e converter e juntar DOCX/PDFs estão disponíveis pelos cartões da página inicial, com seleção, reordenação e download do PDF final.
 - **Imagens para PDF:** JPG, JPEG e PNG, uma imagem por página A4, com ordem ajustável, orientação automática e transparências sobre fundo branco. Funciona sem Word ou LibreOffice.
+- **QR Code:** links ou texto em PNG, com legenda opcional, prévia e download; funciona sem Word ou LibreOffice.
 - **Conversor local funcional:** converte documentos com o Microsoft Word instalado no Windows e permite juntar os resultados.
 - **Prévia visual:** grade azul com as cinco ferramentas planejadas; ainda não está integrada ao processamento.
 - **Laboratório de conversão:** testa DOCX com LibreOffice, gera exemplos fictícios e registra os resultados para comparação com o Word.
@@ -28,13 +29,15 @@ Instale o [LibreOffice](https://www.libreoffice.org/download/) ou configure `LIB
 .\Start_Suite.bat
 ```
 
-O navegador abre em **http://127.0.0.1:8090**. Escolha **Word para PDF**, **Juntar PDFs**, **Converter e juntar** ou **Imagens para PDF**. Nas ferramentas de junção, selecione pelo menos dois arquivos; imagens para PDF aceita a partir de uma imagem. Ajuste a ordem com os botões ↑ e ↓ antes de processar. QR Code continua planejado. Mantenha o terminal aberto; Ctrl+C encerra a aplicação. Se a porta estiver ocupada, use `.\Start_Suite.bat --port 8091`.
+O navegador abre em **http://127.0.0.1:8090**. Escolha **Word para PDF**, **Juntar PDFs**, **Converter e juntar**, **Imagens para PDF** ou **Gerar QR Code**. Nas ferramentas de junção, selecione pelo menos dois arquivos; imagens para PDF aceita a partir de uma imagem. Ajuste a ordem com os botões ↑ e ↓ antes de processar. QR Code recebe link ou texto, com legenda opcional. Mantenha o terminal aberto; Ctrl+C encerra a aplicação. Se a porta estiver ocupada, use `.\Start_Suite.bat --port 8091`.
 
 Nesta versão local: até 10 documentos, 20 MB por arquivo e 50 MB por tarefa; uma conversão por vez, com até quatro tarefas entre envio, espera e processamento. Os PDFs ficam disponíveis por 30 minutos. Os limites são provisórios, definidos em `suite/settings.py`. O serviço público e sua implantação ainda não estão prontos.
 
 Consulte [a base modular e seu roteiro de teste](docs/modular-foundation.md) para entender o código e verificar o fluxo completo.
 
 O [guia de imagens para PDF](docs/images-to-pdf.md) explica formatos, orientação, margens, limites de pixels e o teste reproduzível. Ao atualizar uma cópia existente, instale as dependências de `requirements.txt` e reinicie o servidor.
+
+O [guia de QR Code](docs/qr-code.md) explica o reaproveitamento do gerador desktop, o limite de texto, a legenda e como testar a leitura do PNG.
 
 ## Abrir o conversor atual
 
@@ -96,6 +99,7 @@ Esse comando gera cinco DOCX fictícios, envia ao servidor local, confere PDFs e
 app.py                    Aplicativo local existente
 public/                   Interface do conversor existente
 suite/conversion/         Adaptador LibreOffice e gerador de DOCX de teste
+suite/qr/                 Gerador de QR Code estático em PNG
 suite/services/           Fila de conversão, resultados e arquivos temporários
 suite/web/                Rotas FastAPI, templates e arquivos da interface
 suite/settings.py         Configurações e limites locais
@@ -107,6 +111,6 @@ docs/                     Escopo, decisões e orientações
 outputs/                  Fontes e exportação da prévia visual
 ```
 
-O adaptador é separado da interface para que o motor possa evoluir sem reescrever as telas. A base modular já atende Word para PDF; as demais ferramentas serão integradas por etapas.
+Os adaptadores são separados da interface para que os motores possam evoluir sem reescrever as telas. As cinco ferramentas iniciais já possuem fluxos locais; a preparação para hospedagem pública é uma próxima etapa.
 
 Consulte o [backend de operações com PDF](docs/pdf-backend.md) para testar juntar PDFs e converter e juntar. Os nomes dos arquivos e diretórios do projeto agora são em inglês: use `Start_Suite.bat`, `Test_Conversion.bat` e `validate_conversion.py`. Os resultados históricos locais foram preservados em `laboratory/`, com os relatórios chamados `report.html` e `report.json`.

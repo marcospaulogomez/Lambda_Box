@@ -10,9 +10,9 @@ Hoje existem três partes distintas:
 
 - **Aplicativo funcional:** `app.py` e `public/`, iniciados por `Start_Converter.bat`. Automatiza o Word instalado no Windows e oferece o fluxo de converter e juntar. A junção normalmente usa PDF-Lib no navegador.
 - **Prévia da suíte:** `outputs/suite-design-preview.html`, exportada para `outputs/design-preview.html` e aberta por `Preview_Design.bat`. Exibe as cinco ferramentas, mas ainda não realiza operações com arquivos.
-- **Suíte modular local:** `suite/web/`, iniciada por `Start_Suite.bat`, com a grade inicial e o fluxo funcional de Word para PDF.
+- **Suíte modular local:** `suite/web/`, iniciada por `Start_Suite.bat`, com a grade inicial e as cinco ferramentas funcionais.
 
-A suíte está disponível em `Start_Suite.bat`: grade inicial com Word para PDF, juntar PDFs, converter e juntar e imagens para PDF, fila local e downloads. Consulte [a base modular](modular-foundation.md) para entender a implementação. QR Code continua planejado.
+A suíte está disponível em `Start_Suite.bat`: grade inicial com Word para PDF, juntar PDFs, converter e juntar, imagens para PDF e QR Code, com processamento e downloads. Consulte [a base modular](modular-foundation.md) para entender a implementação.
 
 Juntar PDFs e converter e juntar podem ser usados diretamente pelos cartões, com botões para reordenar os arquivos antes do envio. Consulte [as operações com PDF](pdf-backend.md).
 
@@ -34,7 +34,7 @@ O laboratório da primeira etapa está disponível em `Test_Conversion.bat`. Con
 
 DOCX é a proposta inicial para reduzir a matriz de validação. O conversor atual aceita outros formatos; o suporte deles na nova suíte será decidido com testes, sem retirar recursos do aplicativo atual nesta etapa.
 
-O gerador de QR Code existente ainda precisa ser localizado e avaliado para reaproveitamento. Um QR Code estático armazena diretamente o conteúdo e dispensa um serviço de redirecionamento próprio.
+O gerador de QR Code existente foi localizado e sua lógica foi adaptada para a suíte: links ou texto, legenda opcional, prévia e PNG para download, sem motor Office. Consulte [o guia de QR Code](qr-code.md). Um QR Code estático armazena diretamente o conteúdo e dispensa um serviço de redirecionamento próprio.
 
 ## Comportamentos compartilhados
 
@@ -48,6 +48,8 @@ O gerador de QR Code existente ainda precisa ser localizado e avaliado para reap
 - Tratar arquivo vazio, corrompido ou protegido com uma mensagem específica quando possível.
 
 O tamanho máximo, o tempo de processamento e a política de retenção serão definidos após medir o motor de conversão e escolher a hospedagem. A versão pública dependerá desses limites e do isolamento dos processos.
+
+Os limites locais atuais estão documentados no README e nos guias de cada ferramenta. QR Code usa geração em memória e não participa da fila nem da retenção de documentos.
 
 ## Arquitetura proposta
 

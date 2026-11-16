@@ -81,7 +81,7 @@ class WebTests(unittest.TestCase):
         home = self.client.get("/")
         self.assertEqual(home.status_code, 200)
         self.assertIn('href="/word-to-pdf"', home.text)
-        self.assertEqual(home.text.count("EM BREVE"), 1)
+        self.assertNotIn("EM BREVE", home.text)
         for operation, accept, minimum in [("word-to-pdf", ".docx", 1), ("merge-pdfs", ".pdf", 2), ("convert-and-merge", ".docx,.pdf", 2),
                                             ("images-to-pdf", ".jpg,.jpeg,.png", 1)]:
             with self.subTest(operation=operation):

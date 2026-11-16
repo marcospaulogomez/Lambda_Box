@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Gerar QR Code{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='/qr-code.js') }}" defer></script>{% endblock %}
+{% block content %}
+  <a class="back-link" href="/">← Todas as ferramentas</a>
+  <div class="intro tool-intro"><h1>Gerar QR Code</h1><p>Transforme um link ou texto em um código para compartilhar.</p></div>
+  <section class="workspace" id="qr-workspace" data-max-text-bytes="{{ max_text_bytes }}">
+    <form id="qr-form">
+      <fieldset id="qr-controls">
+        <legend class="sr-only">Conteúdo do QR Code</legend>
+        <label class="field-label" for="qr-text">Link ou texto</label>
+        <textarea id="qr-text" name="text" rows="4" maxlength="{{ max_text_bytes }}" required aria-describedby="qr-hint qr-count" placeholder="https://exemplo.com ou uma mensagem"></textarea>
+        <p id="qr-hint" class="file-limits">Até {{ max_text_bytes }} bytes em UTF-8. Acentos e emojis ocupam mais de um byte. O texto é gravado exatamente como digitado; a legenda fica fora do código.</p>
+        <p id="qr-count" class="file-limits" role="status">0 / {{ max_text_bytes }} bytes</p>
+        <label class="field-label" for="qr-caption">Legenda abaixo do código <span class="muted">(opcional)</span></label>
+        <input class="text-input" id="qr-caption" name="caption" type="text" maxlength="{{ max_caption_length }}" aria-describedby="caption-hint" placeholder="Ex.: Material da aula">
+        <p class="file-limits" id="caption-hint">Até {{ max_caption_length }} caracteres. Prefira uma legenda curta; a fonte inclui letras latinas e acentos.</p>
+      </fieldset>
+      <div class="actions"><button class="button primary" id="generate-qr" type="submit">Gerar QR Code</button><button class="text-button" id="clear-qr" type="button">Limpar</button></div>
+    </form>
+    <p class="notice error" id="qr-error" role="alert" hidden></p>
+    <p class="muted" id="qr-status" role="status" aria-live="polite"></p>
+    <section class="results" id="qr-result" aria-labelledby="qr-result-title" hidden>
+      <h2 id="qr-result-title" tabindex="-1">QR Code pronto</h2>
+      <img class="qr-preview" id="qr-preview" alt="Prévia do QR Code gerado">
+      <div class="actions"><a class="button primary" id="download-qr" download="qr-code.png">Baixar PNG</a></div>
+      <p class="file-limits">Leia com a câmera do celular para conferir o conteúdo antes de compartilhar.</p>
+    </section>
+    <p class="retention-note">O QR Code é estático e não expira. Links dependem da disponibilidade e das permissões do destino. O conteúdo é processado no servidor sem salvar arquivos; baixe o PNG antes de fechar ou atualizar a página.</p>
+  </section>
+  <noscript><p class="notice error">Ative o JavaScript para gerar o código e baixar a imagem.</p></noscript>
+{% endblock %}

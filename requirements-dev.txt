@@ -1,3 +1,4 @@
 -r requirements.txt
 -r requirements-validation.txt
 httpx==0.28.1
+zxing-cpp==3.1.1
