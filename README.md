@@ -1,3 +1,5 @@
+Portuguese Version
+
 # Lambda Box
 
 Suíte da Lambda Tecnologia para converter documentos, organizar PDFs, transformar imagens e gerar QR Codes. Projeto em desenvolvimento para aprendizado em Python, portfólio e futura disponibilização à comunidade.
